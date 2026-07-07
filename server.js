@@ -772,9 +772,13 @@ app.get('*', (req, res) => {
 });
 
 // Khởi chạy Server
-app.listen(PORT, () => {
-    console.log(`====================================================`);
-    console.log(`Server Thư viện số Đà Nẵng đang chạy tại:`);
-    console.log(`👉 http://localhost:${PORT}`);
-    console.log(`====================================================`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`====================================================`);
+        console.log(`Server Thư viện số Đà Nẵng đang chạy tại:`);
+        console.log(`👉 http://localhost:${PORT}`);
+        console.log(`====================================================`);
+    });
+}
+
+module.exports = app;
