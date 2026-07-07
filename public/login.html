@@ -422,32 +422,12 @@
             </p>
 
             <div class="oauth-btn-list">
-                <!-- OFFICIAL GOOGLE ONE TAP AND SIGN IN WIDGET -->
-                <!-- Google Client ID dynamically loaded. If configured on Google Developer Console, it will automatically render here -->
-                <div id="g_id_onload"
-                     data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
-                     data-context="signin"
-                     data-ux_mode="popup"
-                     data-callback="handleGoogleCredentialResponse"
-                     data-auto_prompt="false"
-                     style="width: 100%; display: flex; justify-content: center; margin-bottom: 10px;">
-                </div>
-                <div class="g_id_signin"
-                     data-type="standard"
-                     data-shape="rectangular"
-                     data-theme="outline"
-                     data-text="signin_with"
-                     data-size="large"
-                     data-logo_alignment="left"
-                     style="width: 100%; max-width: 280px;">
-                </div>
-
-                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger" style="margin-top: 10px;">
+                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger" style="margin-top: 10px; background-color: #ffffff; color: #202124; border-color: #dadce0;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width:18px;">
-                    Google Login (Simulate Fallback)
+                    Đăng nhập bằng Google
                 </button>
 
-                <button class="btn-oauth" onclick="alert('Đăng nhập Microsoft đang bảo trì, vui lòng sử dụng tài khoản Google!')" style="margin-top: 10px;">
+                <button class="btn-oauth" onclick="showAlert('Thông báo hệ thống', 'Cổng đăng nhập Microsoft đang bảo trì, vui lòng sử dụng phương thức đăng nhập bằng Google hoặc mã thẻ!', 'warning')" style="margin-top: 12px;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" style="width:18px;">
                     Đăng nhập bằng Microsoft
                 </button>
@@ -498,12 +478,12 @@
                         <span class="g-acc-email">admin@tvdn.gov.vn</span>
                     </div>
                 </div>
-            </div>
 
-            <div class="g-account-item" onclick="alert('Đăng ký tài khoản Gmail mới trên trình duyệt trước!'); document.getElementById('google-modal').classList.remove('active');">
-                <div class="g-avatar" style="background-color: #f1f3f4; color: #5f6368;"><i class="fa-solid fa-user-plus"></i></div>
-                <div class="g-acc-info">
-                    <span class="g-acc-name" style="color: #1a73e8; font-weight: 500;">Sử dụng một tài khoản khác</span>
+                <div class="g-account-item" onclick="showToast('Vui lòng sử dụng một trong các tài khoản Google mẫu ở trên!', 'warning'); document.getElementById('google-modal').classList.remove('active');">
+                    <div class="g-avatar" style="background-color: #f1f3f4; color: #5f6368;"><i class="fa-solid fa-user-plus"></i></div>
+                    <div class="g-acc-info">
+                        <span class="g-acc-name" style="color: #1a73e8; font-weight: 500;">Sử dụng một tài khoản khác</span>
+                    </div>
                 </div>
             </div>
 
@@ -528,19 +508,19 @@
                 const data = await res.json();
                 if (data.success) {
                     sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
-                    alert(`Đăng nhập Google thành công!\nXin chào bạn: ${data.user.fullname}`);
-                    
-                    if (data.user.role === 'admin') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
+                    showAlert('Đăng nhập thành công', `Xin chào bạn: ${data.user.fullname}`, 'success', () => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    });
                 } else {
-                    alert('Lỗi đăng nhập Google: ' + data.message);
+                    showAlert('Lỗi đăng nhập', 'Xác thực Google thất bại: ' + data.message, 'error');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Có lỗi xảy ra khi xác thực Google API.');
+                showAlert('Lỗi hệ thống', 'Có lỗi xảy ra khi kết nối máy chủ xác thực Google API.', 'error');
             }
         }
 
@@ -584,14 +564,15 @@
                         const data = await res.json();
                         
                         if (data.success) {
-                            alert(`Đăng ký thẻ thư viện thành công!\nMã thẻ bạn đọc: ${data.user.cardId}\nTên đăng nhập: ${data.user.username}`);
-                            sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
-                            window.location.href = 'index.html';
+                            showAlert('Đăng ký thành công', `Đăng ký thẻ thư viện thành công!\nMã thẻ của bạn: ${data.user.cardId}\nTên đăng nhập: ${data.user.username}`, 'success', () => {
+                                sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                                window.location.href = 'index.html';
+                            });
                         } else {
-                            alert('Đăng ký thất bại: ' + data.message);
+                            showAlert('Đăng ký thất bại', data.message, 'error');
                         }
                     } catch (err) {
-                        alert('Lỗi kết nối API Server đăng ký.');
+                        showAlert('Lỗi hệ thống', 'Không thể kết nối tới máy chủ đăng ký.', 'error');
                     }
                 });
             }
@@ -614,18 +595,18 @@
                         
                         if (data.success) {
                             sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
-                            alert(`Đăng nhập thành công! Xin chào ${data.user.fullname}`);
-                            
-                            if (data.user.role === 'admin') {
-                                window.location.href = 'admin.html';
-                            } else {
-                                window.location.href = 'index.html';
-                            }
+                            showAlert('Đăng nhập thành công', `Xin chào bạn: ${data.user.fullname}`, 'success', () => {
+                                if (data.user.role === 'admin') {
+                                    window.location.href = 'admin.html';
+                                } else {
+                                    window.location.href = 'index.html';
+                                }
+                            });
                         } else {
-                            alert('Đăng nhập thất bại: ' + data.message);
+                            showAlert('Đăng nhập thất bại', data.message, 'error');
                         }
                     } catch (err) {
-                        alert('Lỗi kết nối API Server đăng nhập.');
+                        showAlert('Lỗi hệ thống', 'Không thể kết nối tới máy chủ đăng nhập.', 'error');
                     }
                 });
             }
@@ -646,19 +627,19 @@
                     }
                 });
 
+                // Lọc bỏ phần tử "Sử dụng tài khoản khác" để không kích hoạt login
                 googleAccountItems.forEach(item => {
-                    item.addEventListener('click', async () => {
-                        googleModal.classList.remove('active');
-                        // Tạo một Mock Google credential token
-                        const mockPayload = {
-                            email: item.getAttribute('data-email'),
-                            name: item.getAttribute('data-fullname')
-                        };
-                        const mockCredentialToken = "mock_jwt." + btoa(JSON.stringify(mockPayload)) + ".mock_sig";
-                        
-                        // Chạy qua hàm xử lý chính thức gọi backend
-                        await handleGoogleCredentialResponse({ credential: mockCredentialToken });
-                    });
+                    if (item.getAttribute('data-username')) {
+                        item.addEventListener('click', async () => {
+                            googleModal.classList.remove('active');
+                            const mockPayload = {
+                                email: item.getAttribute('data-email'),
+                                name: item.getAttribute('data-fullname')
+                            };
+                            const mockCredentialToken = "mock_jwt." + btoa(unescape(encodeURIComponent(JSON.stringify(mockPayload)))) + ".mock_sig";
+                            await handleGoogleCredentialResponse({ credential: mockCredentialToken });
+                        });
+                    }
                 });
             }
         });
