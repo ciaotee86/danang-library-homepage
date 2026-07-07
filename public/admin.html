@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản trị - Thư viện Đà Nẵng</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for statistics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* CSS Admin Specific layouts overrides */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+            background-color: #f1f5f9;
+        }
+
+        /* Sidebar Navigation styling */
+        .admin-sidebar {
+            background-color: var(--primary-dark);
+            color: rgba(255,255,255,0.7);
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 24px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 24px;
+        }
+
+        .sidebar-brand-logo {
+            height: 36px;
+            filter: brightness(0) invert(1);
+        }
+
+        .sidebar-brand-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--white);
+            font-size: 1rem;
+        }
+
+        .sidebar-menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 12px;
+        }
+
+        .sidebar-menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+        }
+
+        .sidebar-menu-item a:hover,
+        .sidebar-menu-item.active a {
+            background-color: rgba(255,255,255,0.08);
+            color: var(--white);
+        }
+
+        .sidebar-menu-item.active a {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 0 24px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Right Panel styling */
+        .admin-main-panel {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .admin-header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-page-title h1 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+
+        .admin-user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .admin-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .admin-content-area {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        /* Common table styles */
+        .table-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .admin-table th {
+            background-color: #fafbfc;
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .admin-table td {
+            border-bottom: 1px solid #f1f5f9;
+            padding: 14px 20px;
+            color: var(--text-dark);
+        }
+
+        .admin-table tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Badges */
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .badge-success { background-color: #d1fae5; color: #065f46; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .badge-info { background-color: #e0f2fe; color: #0369a1; }
+
+        /* Metric Widgets Grid */
+        .metric-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .metric-widget-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .metric-widget-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .icon-blue { background-color: #eff6ff; color: #2563eb; }
+        .icon-amber { background-color: #fffbeb; color: #d97706; }
+        .icon-emerald { background-color: #ecfdf5; color: #059669; }
+        .icon-rose { background-color: #fff1f2; color: #e11d48; }
+
+        .metric-widget-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-widget-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1.2;
+        }
+
+        .metric-widget-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Detail section at bottom of borrow slip view */
+        .borrow-detail-section {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 16px;
+        }
+
+        .detail-item-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-item-lbl {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .detail-item-val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Statistics Layout charts grid */
+        .charts-container-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .chart-box-card {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+        }
+
+        .chart-box-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .chart-canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 250px;
+        }
+
+        .tops-lists-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Settings Split layout */
+        .settings-split-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 24px;
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            min-height: 450px;
+        }
+
+        .settings-nav {
+            background-color: #fafbfc;
+            border-right: 1px solid var(--border-color);
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .settings-nav-item button {
+            width: 100%;
+            text-align: left;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-nav-item.active button,
+        .settings-nav-item button:hover {
+            background-color: #f1f5f9;
+            color: var(--primary-color);
+        }
+
+        .settings-nav-item.active button {
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .settings-content-panel {
+            padding: 30px;
+        }
+
+        /* Payment Modal */
+        .payment-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(9, 26, 48, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 20000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .payment-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .payment-modal-card {
+            background-color: var(--white);
+            width: 480px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            padding: 30px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: var(--transition-smooth);
+        }
+
+        .payment-modal-overlay.active .payment-modal-card {
+            transform: translateY(0);
+        }
+
+        .payment-methods-select {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .method-btn {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+
+        .method-btn.active {
+            border-color: var(--secondary-color);
+            background-color: #f0fdfa;
+            color: var(--secondary-color);
+        }
+
+        .method-btn img {
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .qr-display-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8fafc;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .qr-img {
+            width: 200px;
+            height: 200px;
+            background-color: #cbd5e1;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .payment-btn-confirm {
+            background-color: #10b981;
+            color: var(--white);
+            padding: 12px;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .payment-btn-confirm:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* Reader Edit Modal */
+        .reader-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(9, 26, 48, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 15000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .reader-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .reader-modal-card {
+            background-color: var(--white);
+            width: 440px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            padding: 30px;
+            position: relative;
+            transform: translateY(-20px);
+            transition: var(--transition-smooth);
+        }
+
+        .reader-modal-overlay.active .reader-modal-card {
+            transform: translateY(0);
+        }
+
+        /* Layout modifications */
+        .search-filter-row {
+            display: flex;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #fafbfc;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box-input {
+            flex-grow: 1;
+            min-width: 200px;
+            padding: 8px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-add-action {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-add-action:hover {
+            background-color: var(--secondary-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-layout">
+        
+        <!-- Left Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <img src="assets/logo.png" alt="Logo Thư viện" class="sidebar-brand-logo">
+                <span class="sidebar-brand-name">HỆ THỐNG ADMIN</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul class="sidebar-menu-list">
+                    <li class="sidebar-menu-item active" data-view="readers">
+                        <a href="#"><i class="fa-solid fa-address-book"></i> Sổ đọc giả</a>
+                    </li>
+                    <li class="sidebar-menu-item" data-view="borrow">
+                        <a href="#"><i class="fa-solid fa-book-open-reader"></i> Quản lý mượn/trả</a>
+                    </li>
+                    <li class="sidebar-menu-item" data-view="orders">
+                        <a href="#"><i class="fa-solid fa-box-open"></i> Đơn hàng sách</a>
+                    </li>
+                    <li class="sidebar-menu-item" data-view="stats">
+                        <a href="#"><i class="fa-solid fa-chart-pie"></i> Thống kê</a>
+                    </li>
+                    <li class="sidebar-menu-item" data-view="settings">
+                        <a href="#"><i class="fa-solid fa-sliders"></i> Cài đặt</a>
+                    </li>
+                    <li class="sidebar-menu-item margin-top-card" onclick="logoutAdmin()">
+                        <a href="#" style="color: #fda4af;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>&copy; 2026 Thư viện Đà Nẵng</p>
+                <p>Version 2.0.0-AI</p>
+            </div>
+        </aside>
+
+        <!-- Right Main Panel -->
+        <main class="admin-main-panel">
+            
+            <!-- Admin Header -->
+            <header class="admin-header">
+                <div class="admin-page-title">
+                    <h1 id="page-title-text">Sổ đọc giả</h1>
+                </div>
+                <div class="admin-user-menu">
+                    <div class="admin-avatar" id="admin-avatar-letters">AD</div>
+                    <span id="admin-fullname-display">Thủ thư hệ thống</span>
+                </div>
+            </header>
+
+            <!-- Admin Content Container -->
+            <div class="admin-content-area">
+                
+                <!-- ================= 1. VIEW: READERS ================= -->
+                <div id="panel-readers" class="admin-panel">
+                    
+                    <!-- Metrics grid -->
+                    <div class="metric-cards-grid">
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-r-total">5</span>
+                                <span class="metric-widget-lbl">Tổng độc giả</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-emerald"><i class="fa-solid fa-user-check"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-r-active">4</span>
+                                <span class="metric-widget-lbl">Đang hoạt động</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-rose"><i class="fa-solid fa-user-slash"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-r-locked">1</span>
+                                <span class="metric-widget-lbl">Bị khóa thẻ</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-amber"><i class="fa-solid fa-user-plus"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-r-new">2</span>
+                                <span class="metric-widget-lbl">Độc giả mới (tháng này)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reader List Table Card -->
+                    <div class="table-card">
+                        <div class="search-filter-row">
+                            <input type="text" placeholder="Tìm độc giả theo tên, mã thẻ, số điện thoại..." class="search-box-input" id="search-reader-input">
+                            <button class="btn-add-action" id="btn-add-reader-trigger">
+                                <i class="fa-solid fa-plus"></i> Thêm độc giả mới
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã thẻ</th>
+                                        <th>Họ và Tên</th>
+                                        <th>Tên đăng nhập</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Sách đang mượn</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="readers-table-body">
+                                    <!-- Dynamic Reader row items go here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= 2. VIEW: BORROW / RETURN ================= -->
+                <div id="panel-borrow" class="admin-panel" style="display: none;">
+                    
+                    <div class="content-tabs-wrapper" style="margin-bottom: 20px;">
+                        <div class="content-tabs">
+                            <button class="content-tab active" data-slip-tab="borrowing">Phiếu đang mượn</button>
+                            <button class="content-tab" data-slip-tab="history">Lịch sử mượn / trả</button>
+                        </div>
+                        <div class="total-books-indicator">
+                            Tổng số phiếu: <strong id="slip-count-indicator">5</strong>
+                        </div>
+                    </div>
+
+                    <!-- Slips Table Card -->
+                    <div class="table-card">
+                        <div class="search-filter-row">
+                            <input type="text" placeholder="Tìm phiếu mượn theo mã phiếu, tên bạn đọc, tên sách..." class="search-box-input" id="search-slip-input">
+                            <select class="filter-select" style="width: 180px;" id="filter-slip-status">
+                                <option value="all">-- Tất cả trạng thái --</option>
+                                <option value="borrowing">Đang mượn</option>
+                                <option value="overdue">Quá hạn trả</option>
+                                <option value="returned">Đã trả sách</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã phiếu</th>
+                                        <th>Độc giả</th>
+                                        <th>Tên cuốn sách</th>
+                                        <th>Ngày mượn</th>
+                                        <th>Hạn trả</th>
+                                        <th>Ngày trả</th>
+                                        <th>Tiền phạt</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="slips-table-body">
+                                    <!-- Dynamic slip items go here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Details Card -->
+                    <div class="borrow-detail-section" id="borrow-detail-section" style="display: none;">
+                        <h3 class="chart-box-title" style="margin-bottom: 0px;"><i class="fa-solid fa-circle-info text-secondary"></i> Chi tiết phiếu mượn / trả</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Mã phiếu</span>
+                                <span class="detail-item-val" id="detail-slip-id">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Họ và Tên độc giả</span>
+                                <span class="detail-item-val" id="detail-fullname">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Mã thẻ thư viện</span>
+                                <span class="detail-item-val" id="detail-card-id">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Cuốn sách mượn</span>
+                                <span class="detail-item-val" id="detail-book-title">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Ngày mượn</span>
+                                <span class="detail-item-val" id="detail-borrow-date">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Hạn trả</span>
+                                <span class="detail-item-val" id="detail-due-date">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Ngày thực trả</span>
+                                <span class="detail-item-val" id="detail-return-date">-</span>
+                            </div>
+                            <div class="detail-item-group">
+                                <span class="detail-item-lbl">Tiền phạt quá hạn</span>
+                                <span class="detail-item-val text-accent" style="color:#ef4444;" id="detail-fine-amount">0đ</span>
+                            </div>
+                        </div>
+
+                        <!-- Action buttons for the slip -->
+                        <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;" id="detail-actions-row">
+                            <!-- Buttons populated by script -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= 3. VIEW: STATISTICS ================= -->
+                <div id="panel-stats" class="admin-panel" style="display: none;">
+                    
+                    <!-- Stats summary cards -->
+                    <div class="metric-cards-grid">
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-blue"><i class="fa-solid fa-book"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-s-books">8</span>
+                                <span class="metric-widget-lbl">Tổng đầu sách</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-emerald"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-s-borrows">5</span>
+                                <span class="metric-widget-lbl">Tổng lượt mượn</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-amber"><i class="fa-solid fa-user-plus"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-s-readers">5</span>
+                                <span class="metric-widget-lbl">Độc giả đăng ký</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-rose"><i class="fa-solid fa-circle-exclamation"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-s-overdue">1</span>
+                                <span class="metric-widget-lbl">Sách quá hạn</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="charts-container-grid">
+                        <!-- Chart 1: Line Chart -->
+                        <div class="chart-box-card">
+                            <h3 class="chart-box-title">Biểu đồ lượt mượn theo ngày</h3>
+                            <div class="chart-canvas-wrapper">
+                                <canvas id="chart-borrows-by-day"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Doughnut Chart -->
+                        <div class="chart-box-card">
+                            <h3 class="chart-box-title">Biểu đồ lượt mượn theo thể loại</h3>
+                            <div class="chart-canvas-wrapper">
+                                <canvas id="chart-borrows-by-category"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ranking lists rows -->
+                    <div class="tops-lists-grid">
+                        
+                        <!-- Top Books -->
+                        <div class="chart-box-card">
+                            <h3 class="chart-box-title"><i class="fa-solid fa-award text-accent"></i> Top sách mượn nhiều nhất</h3>
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Hạng</th>
+                                        <th>Tên sách</th>
+                                        <th>Thể loại</th>
+                                        <th style="text-align: right;">Lượt mượn</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-books-list">
+                                    <!-- Dynamic populated rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Top Readers -->
+                        <div class="chart-box-card">
+                            <h3 class="chart-box-title"><i class="fa-solid fa-crown text-accent"></i> Top độc giả mượn nhiều nhất</h3>
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Hạng</th>
+                                        <th>Độc giả</th>
+                                        <th>Mã thẻ</th>
+                                        <th style="text-align: right;">Lượt mượn</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-readers-list">
+                                    <!-- Dynamic populated rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= 4. VIEW: SETTINGS ================= -->
+                <div id="panel-settings" class="admin-panel" style="display: none;">
+                    
+                    <div class="settings-split-container">
+                        <!-- Left Sub-navigation menu -->
+                        <aside class="settings-nav">
+                            <div class="settings-nav-item active" data-settings-tab="info">
+                                <button><i class="fa-solid fa-circle-info"></i> Thông tin thư viện</button>
+                            </div>
+                            <div class="settings-nav-item" data-settings-tab="rules">
+                                <button><i class="fa-solid fa-gavel"></i> Quy định mượn trả</button>
+                            </div>
+                            <div class="settings-nav-item" data-settings-tab="backup">
+                                <button><i class="fa-solid fa-database"></i> Sao lưu dữ liệu</button>
+                            </div>
+                        </aside>
+
+                        <!-- Right Panel for selected Tab settings -->
+                        <div class="settings-content-panel">
+                            
+                            <!-- Tab: Information -->
+                            <div id="settings-info" class="settings-tab-panel">
+                                <h3 class="chart-box-title">Thông tin cơ sở thư viện</h3>
+                                <form id="settings-info-form" class="filter-form" style="max-width: 500px;">
+                                    <div class="form-group">
+                                        <label class="filter-label">Tên thư viện</label>
+                                        <input type="text" id="set-lib-name" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="filter-label">Địa chỉ</label>
+                                        <input type="text" id="set-lib-address" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="filter-label">Số điện thoại liên hệ</label>
+                                        <input type="text" id="set-lib-phone" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="filter-label">Địa chỉ Email</label>
+                                        <input type="email" id="set-lib-email" class="form-input" required>
+                                    </div>
+                                    <button type="submit" class="btn-apply-filters" style="margin-top: 10px;">Lưu thiết lập thông tin</button>
+                                </form>
+                            </div>
+
+                            <!-- Tab: Rules -->
+                            <div id="settings-rules" class="settings-tab-panel" style="display: none;">
+                                <h3 class="chart-box-title">Cấu hình Quy định mượn trả</h3>
+                                <form id="settings-rules-form" class="filter-form" style="max-width: 500px;">
+                                    <div class="form-group">
+                                        <label class="filter-label">Số ngày mượn tối đa (một cuốn)</label>
+                                        <input type="number" id="set-max-days" class="form-input" min="1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="filter-label">Số sách mượn tối đa cùng lúc</label>
+                                        <input type="number" id="set-max-books" class="form-input" min="1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="filter-label">Phí phạt trễ hạn mỗi ngày (VND)</label>
+                                        <input type="number" id="set-fine-amount" class="form-input" min="1000" step="500" required>
+                                    </div>
+                                    <button type="submit" class="btn-apply-filters" style="margin-top: 10px;">Lưu quy chế mượn sách</button>
+                                </form>
+                            </div>
+
+                            <!-- Tab: Backup / Restore JSON -->
+                            <div id="settings-backup" class="settings-tab-panel" style="display: none;">
+                                <h3 class="chart-box-title">Sao lưu & Khôi phục Cơ sở dữ liệu</h3>
+                                <div style="display: flex; flex-direction: column; gap: 20px; max-width: 550px;">
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                                        Bạn có thể sao lưu toàn bộ dữ liệu hiện tại của thư viện (Độc giả, Sách, Phiếu mượn và Cài đặt) thành một tệp tin JSON tải về máy. Ngoài ra, bạn có thể tải lên tệp tin đã sao lưu để khôi phục trạng thái.
+                                    </p>
+                                    <div style="display: flex; gap: 12px;">
+                                        <button class="btn-add-action" onclick="backupDatabaseJSON()"><i class="fa-solid fa-download"></i> Tải tệp sao lưu (.json)</button>
+                                    </div>
+                                    <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 10px;">
+                                        <h4 style="font-size: 0.9rem; margin-bottom: 12px; color: var(--primary-color);">Khôi phục dữ liệu từ tệp tin</h4>
+                                        <input type="file" id="restore-file-input" accept=".json" style="font-size: 0.85rem; margin-bottom: 12px; display: block;">
+                                        <button class="btn-login" style="border-color: #10b981; color: #10b981; background-color: #ecfdf5;" onclick="restoreDatabaseJSON()"><i class="fa-solid fa-upload"></i> Nhập file & Phục hồi dữ liệu</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= 5. VIEW: ORDERS ================= -->
+                <div id="panel-orders" class="admin-panel" style="display: none;">
+                    <!-- Metrics grid -->
+                    <div class="metric-cards-grid">
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-blue"><i class="fa-solid fa-box-archive"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-o-total">0</span>
+                                <span class="metric-widget-lbl">Tổng đơn hàng</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-amber"><i class="fa-solid fa-hourglass-half"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-o-pending">0</span>
+                                <span class="metric-widget-lbl">Chờ xử lý</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-blue"><i class="fa-solid fa-truck-fast"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-o-shipping">0</span>
+                                <span class="metric-widget-lbl">Đang vận chuyển</span>
+                            </div>
+                        </div>
+                        <div class="metric-widget-card">
+                            <div class="metric-widget-icon icon-emerald"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="metric-widget-info">
+                                <span class="metric-widget-val" id="metric-o-revenue">0đ</span>
+                                <span class="metric-widget-lbl">Doanh thu đã thu</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders table card -->
+                    <div class="table-card" style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 24px;">
+                        <!-- List section -->
+                        <div class="table-list-section">
+                            <div class="search-filter-row" style="margin-bottom: 15px;">
+                                <input type="text" placeholder="Tìm kiếm đơn hàng theo mã đơn, tên độc giả..." class="search-box-input" id="search-order-input" oninput="loadOrders()">
+                            </div>
+                            <div class="table-responsive">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mã đơn</th>
+                                            <th>Bạn đọc</th>
+                                            <th>Ngày đặt</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Thanh toán</th>
+                                            <th>Vận chuyển</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orders-table-body">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Detail section -->
+                        <div class="table-detail-section" id="order-detail-section" style="display: none; background-color: #f8fafc; border: 1px solid var(--border-color); padding: 20px; border-radius: var(--radius-md);">
+                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 15px;"><i class="fa-solid fa-circle-info"></i> Chi tiết đơn hàng</h3>
+                            
+                            <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 10px; text-align: left;">
+                                <p><strong>Mã đơn hàng:</strong> <span id="detail-order-id"></span></p>
+                                <p><strong>Khách hàng:</strong> <span id="detail-order-name"></span></p>
+                                <p><strong>Số điện thoại:</strong> <span id="detail-order-phone"></span></p>
+                                <p><strong>Địa chỉ nhận:</strong> <span id="detail-order-address"></span></p>
+                                <p><strong>Ngày đặt:</strong> <span id="detail-order-date"></span></p>
+                                <p><strong>Mặt hàng đã mua:</strong></p>
+                                <div id="detail-order-items" style="background-color: white; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius-sm); font-size: 0.8rem; line-height: 1.4;"></div>
+                                <p><strong>Tổng cộng:</strong> <strong id="detail-order-amount" style="color: #e11d48; font-size: 1rem;"></strong></p>
+                            </div>
+
+                            <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                                <h4 style="font-size: 0.85rem; margin-bottom: 10px;">Thao tác thủ thư:</h4>
+                                <div style="display: flex; flex-direction: column; gap: 8px;" id="order-action-buttons">
+                                    <!-- Dynamic order action buttons -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PAYMENT MODAL WIDGET (VietQR and Momo simulation) -->
+    <div class="payment-modal-overlay" id="payment-modal">
+        <div class="payment-modal-card">
+            <button class="login-modal-close" onclick="closePaymentModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-header" style="margin-bottom: 12px;">
+                <h3 style="font-size:1.15rem;"><i class="fa-solid fa-wallet text-secondary" style="color:var(--secondary-color);"></i> Thanh Toán Phí Phạt Thư Viện</h3>
+                <p>Mã hóa đơn: <strong id="pay-slip-id">slip-xxxx</strong> • Số tiền: <strong id="pay-amount-label">0đ</strong></p>
+            </div>
+            
+            <div class="payment-methods-select">
+                <button class="method-btn active" id="method-bank" onclick="selectPaymentMethod('bank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/NAPAS_logo.svg" alt="Napas VietQR" style="height:20px; margin-bottom:4px;">
+                    Chuyển khoản VietQR
+                </button>
+                <button class="method-btn" id="method-momo" onclick="selectPaymentMethod('momo')">
+                    <img src="https://upload.wikimedia.org/wikipedia/vi/a/a4/Momo_Logo.png" alt="MoMo" style="height:20px; margin-bottom:4px;">
+                    Ví điện tử MoMo
+                </button>
+            </div>
+
+            <!-- QR code image loader -->
+            <div class="qr-display-area">
+                <img id="qr-payment-img" src="" alt="Mã thanh toán QR" class="qr-img">
+                <p style="font-size: 0.75rem; text-align: center; color: var(--text-muted); line-height: 1.4;" id="pay-instructions">
+                    Mở app ngân hàng bất kỳ trên điện thoại của bạn, quét mã VietQR ở trên để chuyển khoản tự động.
+                </p>
+            </div>
+
+            <button class="payment-btn-confirm" onclick="confirmPaymentSimulate()">
+                <i class="fa-solid fa-circle-check"></i> Xác nhận đã thanh toán (Simulate)
+            </button>
+        </div>
+    </div>
+
+    <!-- READER EDIT / ADD MODAL -->
+    <div class="reader-modal-overlay" id="reader-modal">
+        <div class="reader-modal-card">
+            <button class="login-modal-close" onclick="closeReaderModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-header" style="margin-bottom: 20px;">
+                <h3 id="reader-modal-title">Thêm độc giả mới</h3>
+                <p>Điền thông tin tài khoản bạn đọc vào biểu mẫu bên dưới</p>
+            </div>
+            <form id="reader-form" class="filter-form">
+                <input type="hidden" id="reader-old-username">
+                <div class="form-group">
+                    <label class="filter-label">Họ và Tên</label>
+                    <input type="text" id="reader-fullname" class="form-input" required placeholder="Nhập tên độc giả...">
+                </div>
+                <div class="form-group">
+                    <label class="filter-label">Tên đăng nhập</label>
+                    <input type="text" id="reader-username" class="form-input" required placeholder="Tên đăng nhập viết liền...">
+                </div>
+                <div class="form-group" id="reader-pass-group">
+                    <label class="filter-label">Mật khẩu</label>
+                    <input type="password" id="reader-password" class="form-input" placeholder="Mật khẩu tài khoản...">
+                </div>
+                <div class="form-group">
+                    <label class="filter-label">Số điện thoại</label>
+                    <input type="tel" id="reader-phone" class="form-input" required placeholder="Nhập số điện thoại...">
+                </div>
+                <div class="form-group">
+                    <label class="filter-label">Mã thẻ bạn đọc</label>
+                    <input type="text" id="reader-cardid" class="form-input" required placeholder="Ví dụ: TVDN-1234">
+                </div>
+                <button type="submit" class="btn-apply-filters" style="margin-top: 10px;" id="btn-save-reader">Lưu thông tin</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notifications library -->
+    <script src="notifications.js"></script>
+    <!-- Admin Operations JavaScript file -->
+    <script src="admin.js"></script>
+</body>
+</html>

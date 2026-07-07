@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân Bạn đọc - Thư viện Đà Nẵng</title>
+    <meta name="description" content="Quản lý thẻ thư viện, theo dõi lịch sử mượn trả sách và gia hạn sách trực tuyến dành cho bạn đọc.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .profile-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 40px;
+        }
+
+        .profile-sidebar {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-avatar-large {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: var(--white);
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-name {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .profile-card-id {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            background-color: var(--accent-bg);
+            padding: 4px 12px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .profile-fields-list {
+            text-align: left;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .profile-field-item {
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .profile-field-item strong {
+            color: var(--text-dark);
+        }
+
+        .profile-main-board {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .profile-panel-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+        }
+
+        .profile-panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Metrics */
+        .profile-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .profile-metric-card {
+            background-color: #fafbfc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-metric-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .profile-metric-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .profile-metric-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Detail slip panel */
+        .slip-detail-panel {
+            background-color: #fafbfc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
+                <div class="logo-text">
+                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="search.html">Tra cứu</a></li>
+                    <li><a href="digital.html">Tài liệu số</a></li>
+                    <li><a href="events.html">Sự kiện</a></li>
+                    <li><a href="contact.html">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                </button>
+                <button class="btn-login" id="btn-login-trigger">
+                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        <div class="profile-container">
+            
+            <!-- Left Sidebar Profile card -->
+            <aside class="profile-sidebar">
+                <div class="profile-avatar-large" id="profile-avatar-letters">US</div>
+                <h3 class="profile-name" id="profile-fullname">-</h3>
+                <span class="profile-card-id" id="profile-card-id">-</span>
+                
+                <div class="profile-fields-list">
+                    <div class="profile-field-item">
+                        <i class="fa-solid fa-user text-secondary"></i> <strong>Tên đăng nhập:</strong> <span id="profile-username">-</span>
+                    </div>
+                    <div class="profile-field-item">
+                        <i class="fa-solid fa-phone text-secondary"></i> <strong>Số điện thoại:</strong> <span id="profile-phone">-</span>
+                    </div>
+                    <div class="profile-field-item">
+                        <i class="fa-solid fa-circle-check text-secondary"></i> <strong>Trạng thái thẻ:</strong> <span class="badge badge-success" id="profile-status">Đang hoạt động</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Panel -->
+            <section class="profile-main-board">
+                
+                <!-- Metrics -->
+                <div class="profile-panel-card">
+                    <div class="profile-metrics-grid">
+                        <div class="profile-metric-card">
+                            <div class="metric-widget-icon icon-blue"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="profile-metric-info">
+                                <span class="profile-metric-val" id="metric-p-borrowing">0</span>
+                                <span class="profile-metric-lbl">Sách đang mượn</span>
+                            </div>
+                        </div>
+                        <div class="profile-metric-card">
+                            <div class="metric-widget-icon icon-rose"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="profile-metric-info">
+                                <span class="profile-metric-val" id="metric-p-overdue">0</span>
+                                <span class="profile-metric-lbl">Phiếu quá hạn</span>
+                            </div>
+                        </div>
+                        <div class="profile-metric-card">
+                            <div class="metric-widget-icon icon-amber"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="profile-metric-info">
+                                <span class="profile-metric-val" id="metric-p-fine">0đ</span>
+                                <span class="profile-metric-lbl">Tiền phạt chưa đóng</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slips Table -->
+                <div class="profile-panel-card">
+                    <h3 class="profile-panel-title"><i class="fa-solid fa-receipt text-primary"></i> Sổ tay mượn trả của tôi</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã phiếu</th>
+                                    <th>Tên cuốn sách</th>
+                                    <th>Ngày mượn</th>
+                                    <th>Hạn trả</th>
+                                    <th>Ngày trả</th>
+                                    <th>Tiền phạt</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-slips-table-body">
+                                <!-- Populated dynamically by script -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Slip detail action panel -->
+                    <div class="slip-detail-panel" id="user-slip-detail-panel">
+                        <h4 style="font-size:0.95rem; margin-bottom:12px; color:var(--primary-color);"><i class="fa-solid fa-gear"></i> Hành động cho phiếu mượn <span id="detail-active-slip-id"></span></h4>
+                        <div style="font-size:0.85rem; line-height:1.5; color:var(--text-muted); margin-bottom:15px;" id="detail-active-slip-desc"></div>
+                        <div style="display:flex; gap:12px;" id="detail-active-actions-row">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Table (Book Purchase History) -->
+                <div class="profile-panel-card" style="margin-top: 24px;">
+                    <h3 class="profile-panel-title"><i class="fa-solid fa-box-open text-primary"></i> Lịch sử mua sách & Đơn hàng của tôi</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Ngày mua</th>
+                                    <th>Chi tiết mặt hàng</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Phương thức</th>
+                                    <th>Thanh toán</th>
+                                    <th>Trạng thái giao</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-orders-table-body">
+                                <!-- Populated dynamically by script -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo-area-footer">
+                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
+                    <span class="footer-title">Thư viện Đà Nẵng</span>
+                </div>
+                <p class="footer-desc">Hệ thống thư viện hiện đại hàng đầu khu vực miền Trung, kết nối cộng đồng bạn đọc và hỗ trợ học tập suốt đời.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- PAYMENT MODAL WIDGET (VietQR and Momo simulation) -->
+    <div class="payment-modal-overlay" id="payment-modal">
+        <div class="payment-modal-card">
+            <button class="login-modal-close" onclick="closePaymentModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-header" style="margin-bottom: 12px;">
+                <h3 style="font-size:1.15rem;"><i class="fa-solid fa-wallet text-secondary" style="color:var(--secondary-color);"></i> Thanh Toán Phí Phạt Thư Viện</h3>
+                <p>Mã hóa đơn: <strong id="pay-slip-id">slip-xxxx</strong> • Số tiền: <strong id="pay-amount-label">0đ</strong></p>
+            </div>
+            
+            <div class="payment-methods-select">
+                <button class="method-btn active" id="method-bank" onclick="selectPaymentMethod('bank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/NAPAS_logo.svg" alt="Napas VietQR" style="height:20px; margin-bottom:4px;">
+                    Chuyển khoản VietQR
+                </button>
+                <button class="method-btn" id="method-momo" onclick="selectPaymentMethod('momo')">
+                    <img src="https://upload.wikimedia.org/wikipedia/vi/a/a4/Momo_Logo.png" alt="MoMo" style="height:20px; margin-bottom:4px;">
+                    Ví MoMo
+                </button>
+            </div>
+
+            <!-- QR code image loader -->
+            <div class="qr-display-area">
+                <img id="qr-payment-img" src="" alt="Mã thanh toán QR" class="qr-img">
+                <p style="font-size: 0.75rem; text-align: center; color: var(--text-muted); line-height: 1.4;" id="pay-instructions">
+                    Đang tải mã QR...
+                </p>
+            </div>
+
+            <button class="payment-btn-confirm" onclick="confirmPaymentSimulate()">
+                <i class="fa-solid fa-circle-check"></i> Xác nhận đã thanh toán (Simulate)
+            </button>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <script src="notifications.js"></script>
+    <!-- Profile javascript controller -->
+    <script src="profile.js"></script>
+</body>
+</html>

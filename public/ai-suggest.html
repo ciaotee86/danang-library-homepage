@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gợi ý Đọc sách AI Cá nhân hóa - Thư viện Đà Nẵng</title>
+    <meta name="description" content="Trang đề xuất đọc sách cá nhân hóa dựa trên công nghệ AI, phân tích lịch sử đọc sách và thói quen mượn trả của bạn đọc thư viện.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .ai-hub-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .ai-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%);
+            border-radius: var(--radius-md);
+            padding: 40px;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ai-banner-content {
+            z-index: 2;
+            max-width: 600px;
+        }
+
+        .ai-banner-title {
+            font-size: 1.8rem;
+            color: var(--white);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .ai-banner-desc {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.5;
+        }
+
+        .ai-banner-icon {
+            font-size: 5rem;
+            color: rgba(255,255,255,0.1);
+            position: absolute;
+            right: 40px;
+            z-index: 1;
+        }
+
+        .ai-split-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .ai-sidebar-card {
+            background-color: #fafbfc;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .ai-stats-title {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .habit-chart-wrapper {
+            height: 220px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        /* Glassmorphic Lock Cover */
+        .ai-lock-overlay {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            min-height: 350px;
+        }
+
+        .lock-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: var(--accent-bg);
+            color: var(--accent-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 4px 15px rgba(212, 163, 89, 0.2);
+        }
+
+        /* AI Prompt Chatbox Card */
+        .ai-chat-suggest-card {
+            background-color: #f0f7f8;
+            border-radius: var(--radius-md);
+            border: 1px solid #c7e6ea;
+            padding: 24px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .ai-avatar-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .ai-avatar-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .ai-avatar-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--secondary-dark);
+        }
+
+        .ai-speech-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .ai-recommendation-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Survey Checklist */
+        .survey-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .survey-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--white);
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .survey-item input {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
+                <div class="logo-text">
+                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="search.html">Tra cứu</a></li>
+                    <li><a href="digital.html">Tài liệu số</a></li>
+                    <li><a href="events.html">Sự kiện</a></li>
+                    <li><a href="contact.html">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-ai-suggest active" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                </button>
+                <button class="btn-login" id="btn-login-trigger">
+                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-main">
+        <div class="ai-hub-container">
+            
+            <!-- Banner area -->
+            <div class="ai-banner">
+                <div class="ai-banner-content">
+                    <h2 class="ai-banner-title">Hệ Thống Đề Xuất Đọc AI Cá Nhân Hóa</h2>
+                    <p class="ai-banner-desc">Hệ thống phân tích thói quen mượn sách, lịch sử đọc và các chủ đề yêu thích của bạn đọc trong cơ sở dữ liệu để đưa ra các gợi ý sách học tập và nghiên cứu chuẩn xác nhất.</p>
+                </div>
+                <i class="fa-solid fa-brain ai-banner-icon"></i>
+            </div>
+
+            <!-- Main Layout Split -->
+            <div class="ai-split-layout">
+                
+                <!-- Sidebar Analytics -->
+                <aside class="ai-sidebar-column">
+                    <div class="ai-sidebar-card">
+                        <h3 class="ai-stats-title"><i class="fa-solid fa-chart-pie text-secondary"></i> Phân tích Thể loại đọc</h3>
+                        <div class="habit-chart-wrapper">
+                            <canvas id="user-habit-chart"></canvas>
+                        </div>
+                        <div style="font-size:0.8rem; line-height:1.5; color:var(--text-muted);">
+                            Biểu đồ tròn thể hiện thói quen lựa chọn đầu sách của bạn theo từng danh mục khoa học, lịch sử địa phương và phát triển kỹ năng.
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Center suggest board -->
+                <section class="ai-main-board">
+                    
+                    <!-- UNLOGGED COVER -->
+                    <div class="ai-lock-overlay" id="ai-unlogged-card" style="display: none;">
+                        <div class="lock-icon-wrapper">
+                            <i class="fa-solid fa-user-lock"></i>
+                        </div>
+                        <h3 style="font-size:1.3rem; color:var(--primary-color);">Yêu Cầu Xác Thực Tài Khoản</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 420px; line-height: 1.5;">
+                            Vui lòng đăng nhập thẻ thư viện của bạn để hệ thống AI có dữ liệu phân tích lịch sử đọc cá nhân và đề xuất các đầu sách phù hợp.
+                        </p>
+                        <button class="btn-search-submit" onclick="window.location.href='login.html'" style="width: auto; padding: 12px 30px;">
+                            <i class="fa-solid fa-key"></i> Đăng nhập ngay
+                        </button>
+                    </div>
+
+                    <!-- LOGGED IN BOARD -->
+                    <div id="ai-logged-board" style="display: none;">
+                        
+                        <!-- AI Speech card -->
+                        <div class="ai-chat-suggest-card">
+                            <div class="ai-avatar-badge">
+                                <div class="ai-avatar-circle">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </div>
+                                <span class="ai-avatar-name">Hệ thống Trí tuệ Nhân tạo TVDN</span>
+                            </div>
+                            <div class="ai-speech-text" id="ai-analysis-feedback">
+                                Xin chào Lê Hoàng Nam! Dựa trên việc bạn đã mượn **2 cuốn sách** gần đây, AI nhận thấy chủ đề yêu thích nhất của bạn là **Lịch sử địa phương** (cuốn Địa Chí Lịch Sử Đà Nẵng) và **Công nghệ số** (cuốn Kỷ Nguyên Trí Tuệ Nhân Tạo).
+                                <br><br>
+                                Hôm nay, tôi khuyên bạn nên lựa chọn mượn đọc cuốn sách bên dưới:
+                            </div>
+                        </div>
+
+                        <!-- Recommendations grid -->
+                        <h3 class="card-title" style="margin-bottom: 20px;"><i class="fa-solid fa-sparkles text-accent"></i> Sách đề xuất dành riêng cho bạn</h3>
+                        <div class="ai-recommendation-list" id="ai-suggestions-grid">
+                            <!-- Populated dynamically by script -->
+                        </div>
+
+                        <!-- Interest Survey Card -->
+                        <div class="ai-sidebar-card" style="background-color: var(--accent-bg); border-color: var(--accent-light); margin-top: 40px;">
+                            <h3 class="ai-stats-title" style="border-bottom-color: var(--accent-light); color: var(--accent-dark);"><i class="fa-solid fa-list-check"></i> Cập nhật sở thích đọc (Khảo sát nhanh)</h3>
+                            <form id="ai-survey-form">
+                                <p style="font-size:0.85rem; margin-bottom:12px; color:var(--text-dark);">Chọn thêm các lĩnh vực bạn quan tâm để AI điều chỉnh bộ đề xuất:</p>
+                                <div class="survey-grid" style="grid-template-columns: repeat(3, 1fr);">
+                                    <label class="survey-item">
+                                        <input type="checkbox" name="interest" value="ai"> Công nghệ & AI
+                                    </label>
+                                    <label class="survey-item">
+                                        <input type="checkbox" name="interest" value="history"> Lịch sử địa phương
+                                    </label>
+                                    <label class="survey-item">
+                                        <input type="checkbox" name="interest" value="skills"> Kỹ năng mềm
+                                    </label>
+                                    <label class="survey-item">
+                                        <input type="checkbox" name="interest" value="literature"> Văn học Nghệ thuật
+                                    </label>
+                                    <label class="survey-item">
+                                        <input type="checkbox" name="interest" value="science"> Khoa học tự nhiên
+                                    </label>
+                                    <label class="survey-item">
+                                        <input type="checkbox" name="interest" value="health"> Y học & Đời sống
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn-apply-filters" style="width:auto; padding:10px 24px; background-color: var(--accent-dark); color:white;">Cập nhật đề xuất</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo-area-footer">
+                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
+                    <span class="footer-title">Thư viện Đà Nẵng</span>
+                </div>
+                <p class="footer-desc">Hệ thống thư viện hiện đại hàng đầu khu vực miền Trung, kết nối cộng đồng bạn đọc và hỗ trợ học tập suốt đời.</p>
+            </div>
+            <div class="footer-info">
+                <h4 class="footer-heading">Thông tin liên hệ</h4>
+                <address>
+                    <p><i class="fa-solid fa-map-location-dot"></i> 46 Bạch Đằng, Hải Châu, Đà Nẵng</p>
+                    <p><i class="fa-solid fa-phone"></i> (0236) 3822603</p>
+                </address>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Notifications -->
+    <script src="notifications.js"></script>
+    <!-- AI suggests javascript file -->
+    <script src="ai-suggest.js"></script>
+</body>
+</html>

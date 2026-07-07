@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên hệ & Chỉ đường - Thư viện Đà Nẵng</title>
+    <meta name="description" content="Liên hệ Thư viện Tổng hợp Đà Nẵng. Bản đồ vị trí, số điện thoại hỗ trợ, giờ mở cửa các ngày trong tuần.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .contact-info-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .contact-map-mock {
+            height: 250px;
+            background-color: #e2e8f0;
+            border-radius: var(--radius-sm);
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-map-mock::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, #cbd5e1 10%, transparent 10%);
+            background-size: 15px 15px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
+                <div class="logo-text">
+                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="search.html">Tra cứu</a></li>
+                    <li><a href="digital.html">Tài liệu số</a></li>
+                    <li><a href="events.html">Sự kiện</a></li>
+                    <li><a href="contact.html" class="active">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                </button>
+                <button class="btn-login" id="btn-login-trigger">
+                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        <div class="contact-layout">
+            
+            <!-- Contact form card -->
+            <div class="contact-info-card">
+                <h3 style="font-size:1.15rem; font-weight:700; color:var(--primary-color); border-bottom:2px solid var(--border-color); padding-bottom:12px; margin-bottom:20px;"><i class="fa-solid fa-envelope-open-text text-secondary"></i> Gửi thắc mắc đến thủ thư</h3>
+                <form onsubmit="event.preventDefault(); showAlert('Thành công', 'Ý kiến đóng góp của bạn đã được gửi thành công. Thủ thư sẽ phản hồi trong vòng 24 giờ làm việc!', 'success'); this.reset();">
+                    <div class="form-group">
+                        <label class="filter-label">Họ tên của bạn</label>
+                        <input type="text" placeholder="Nhập họ tên đầy đủ..." class="form-input" required>
+                    </div>
+                    <div class="form-group" style="margin-top:14px;">
+                        <label class="filter-label">Địa chỉ Email</label>
+                        <input type="email" placeholder="Ví dụ: hoten@gmail.com" class="form-input" required>
+                    </div>
+                    <div class="form-group" style="margin-top:14px;">
+                        <label class="filter-label">Nội dung thắc mắc / Đóng góp ý kiến</label>
+                        <textarea rows="5" class="form-input" style="height:auto; font-family:inherit; padding:10px;" placeholder="Bạn muốn hỏi về việc làm thẻ, đề xuất thêm đầu sách mới hay báo lỗi kỹ thuật hệ thống..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-search-submit" style="margin-top:20px; width:auto; padding:10px 30px;"><i class="fa-solid fa-paper-plane"></i> Gửi thư đóng góp</button>
+                </form>
+            </div>
+
+            <!-- Contact info card right -->
+            <div class="contact-info-card" style="background-color:#fafbfc;">
+                <h3 style="font-size:1.15rem; font-weight:700; color:var(--primary-color); border-bottom:2px solid var(--border-color); padding-bottom:12px; margin-bottom:20px;"><i class="fa-solid fa-map-location-dot text-secondary"></i> Thông tin liên hệ chính thức</h3>
+                <address style="font-style:normal; font-size:0.85rem; line-height:1.8; color:var(--text-dark); display:flex; flex-direction:column; gap:12px;">
+                    <p><i class="fa-solid fa-location-dot" style="width:20px;"></i> <strong>Vị trí:</strong> 46 Bạch Đằng, Hải Châu, Đà Nẵng, Việt Nam</p>
+                    <p><i class="fa-solid fa-phone" style="width:20px;"></i> <strong>Điện thoại:</strong> (0236) 3822603</p>
+                    <p><i class="fa-solid fa-envelope" style="width:20px;"></i> <strong>Email hỗ trợ:</strong> tvdn@danang.gov.vn</p>
+                    <p><i class="fa-solid fa-clock" style="width:20px;"></i> <strong>Thời gian mở cửa:</strong> <br>Thứ Hai - Thứ Sáu: 07:30 - 21:00 <br>Thứ Bảy - Chủ Nhật: 08:00 - 17:00</p>
+                </address>
+
+                <!-- Map mockup -->
+                <div class="contact-map-mock">
+                    <i class="fa-solid fa-map-pin" style="font-size:2.2rem; color:#ef4444; z-index:2; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.2));"></i>
+                    <strong style="margin-top:10px; font-size:0.85rem; z-index:2;">Thư viện Tổng hợp Đà Nẵng</strong>
+                    <span style="font-size:0.7rem; color:var(--text-muted); z-index:2;">46 Bạch Đằng, Hải Châu, Đà Nẵng</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo-area-footer">
+                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
+                    <span class="footer-title">Thư viện Đà Nẵng</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions && loggedUser) {
+                const adminButton = loggedUser.role === 'admin' 
+                    ? `<button class="btn-login" onclick="window.location.href='admin.html'" style="border-color:var(--secondary-color); color:var(--secondary-color); background-color:#eff6ff;"><i class="fa-solid fa-gauge-high"></i> Quản trị</button>` 
+                    : '';
+                headerActions.innerHTML = `
+                    <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                    </button>
+                    ${adminButton}
+                    <div class="user-greeting-badge" onclick="window.location.href='profile.html'" style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600; color:var(--primary-color); cursor:pointer;" title="Trang cá nhân bạn đọc">
+                        <i class="fa-solid fa-user-circle" style="font-size:1.15rem; color:var(--secondary-color);"></i> Hi, ${loggedUser.fullname}
+                    </div>
+                    <button class="btn-login" id="btn-logout" style="border-color:#fca5a5; color:#e11d48; background-color:#fff1f2;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </button>
+                `;
+                document.getElementById('btn-logout').addEventListener('click', () => {
+                    sessionStorage.removeItem('tvdn_logged_in_user');
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sự kiện & Hội thảo - Thư viện Đà Nẵng</title>
+    <meta name="description" content="Danh sách các hội thảo học thuật, câu lạc bộ sách sông Hàn, và ngày hội sách tại Thư viện Đà Nẵng.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .events-list-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .event-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 24px;
+            box-shadow: var(--shadow-sm);
+            align-items: center;
+        }
+
+        .event-thumbnail {
+            height: 140px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+        }
+
+        .event-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .event-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .event-desc {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
+                <div class="logo-text">
+                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="search.html">Tra cứu</a></li>
+                    <li><a href="digital.html">Tài liệu số</a></li>
+                    <li><a href="events.html" class="active">Sự kiện</a></li>
+                    <li><a href="contact.html">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                </button>
+                <button class="btn-login" id="btn-login-trigger">
+                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        <h2 class="card-title" style="margin-bottom:24px;"><i class="fa-solid fa-calendar-days text-secondary"></i> Tin tức & Chuỗi sự kiện phát triển văn hóa đọc</h2>
+
+        <div class="events-list-wrapper">
+            
+            <!-- Event 1 -->
+            <div class="event-card">
+                <div class="event-thumbnail" style="background: linear-gradient(135deg, #d4a359 0%, #a16207 100%);">
+                    <i class="fa-solid fa-book-open-reader"></i>
+                </div>
+                <div>
+                    <h3 class="event-title">Ngày Hội Đọc Sách Sông Hàn 2026</h3>
+                    <div class="event-meta">
+                        <span><i class="fa-solid fa-calendar"></i> 05/08/2026</span>
+                        <span><i class="fa-solid fa-location-dot"></i> Quảng trường Thư viện</span>
+                    </div>
+                    <p class="event-desc">Trưng bày hơn 5,000 đầu sách về văn hóa miền Trung, lịch sử Đà Nẵng cổ xưa và các công nghệ chuyển đổi số. Bạn đọc tham gia sẽ được tặng thẻ thư viện miễn phí và tham gia bốc thăm trúng thưởng.</p>
+                    <button class="btn-login" style="margin-top:14px; width:auto; padding:6px 16px;" onclick="registerEvent('Ngày Hội Đọc Sách Sông Hàn 2026')">Đăng ký tham gia</button>
+                </div>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="event-card">
+                <div class="event-thumbnail" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <h3 class="event-title">Hội thảo: Khai thác Trí tuệ Nhân tạo hỗ trợ Nghiên cứu Khoa học</h3>
+                    <div class="event-meta">
+                        <span><i class="fa-solid fa-calendar"></i> 12/08/2026</span>
+                        <span><i class="fa-solid fa-location-dot"></i> Hội trường tầng 3</span>
+                    </div>
+                    <p class="event-desc">Hướng dẫn bạn đọc cách sử dụng các mô hình AI lớn để tổng hợp tài liệu, tham khảo nghiên cứu khoa học an toàn, tuân thủ đạo đức nghiên cứu và tránh vi phạm bản quyền.</p>
+                    <button class="btn-login" style="margin-top:14px; width:auto; padding:6px 16px;" onclick="registerEvent('Hội thảo AI hỗ trợ Nghiên cứu')">Đăng ký tham gia</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo-area-footer">
+                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
+                    <span class="footer-title">Thư viện Đà Nẵng</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions && loggedUser) {
+                const adminButton = loggedUser.role === 'admin' 
+                    ? `<button class="btn-login" onclick="window.location.href='admin.html'" style="border-color:var(--secondary-color); color:var(--secondary-color); background-color:#eff6ff;"><i class="fa-solid fa-gauge-high"></i> Quản trị</button>` 
+                    : '';
+                headerActions.innerHTML = `
+                    <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                    </button>
+                    ${adminButton}
+                    <div class="user-greeting-badge" onclick="window.location.href='profile.html'" style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600; color:var(--primary-color); cursor:pointer;" title="Trang cá nhân bạn đọc">
+                        <i class="fa-solid fa-user-circle" style="font-size:1.15rem; color:var(--secondary-color);"></i> Hi, ${loggedUser.fullname}
+                    </div>
+                    <button class="btn-login" id="btn-logout" style="border-color:#fca5a5; color:#e11d48; background-color:#fff1f2;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </button>
+                `;
+                document.getElementById('btn-logout').addEventListener('click', () => {
+                    sessionStorage.removeItem('tvdn_logged_in_user');
+                    window.location.reload();
+                });
+            }
+        });
+
+        function registerEvent(eventName) {
+            const user = sessionStorage.getItem('tvdn_logged_in_user');
+            if (!user) {
+                showAlert('Yêu cầu đăng nhập', 'Vui lòng đăng nhập thẻ bạn đọc trước khi đăng ký tham gia sự kiện!', 'warning');
+                return;
+            }
+            showAlert('Đăng ký thành công', `Bạn đã đăng ký tham gia sự kiện: "${eventName}" thành công!\nHệ thống đã lưu thông tin và sẽ gửi email nhắc nhở trước ngày diễn ra.`, 'success');
+        }
+    </script>
+</body>
+</html>

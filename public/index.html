@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thư viện Số Đà Nẵng - Kết Nối Tri Thức, Phát Triển Cộng Đồng</title>
+    <meta name="description" content="Trang chủ Thư viện Số Đà Nẵng. Tìm kiếm sách, tài liệu học tập, nhận gợi ý đọc sách từ AI và tương tác với chatbot hỗ trợ thông minh.">
+    <meta name="keywords" content="thư viện đà nẵng, thư viện số, mượn sách, gợi ý sách AI, tra cứu tài liệu">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
+                <div class="logo-text">
+                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Trang chủ</a></li>
+                    <li><a href="search.html">Tra cứu</a></li>
+                    <li><a href="digital.html">Tài liệu số</a></li>
+                    <li><a href="events.html">Sự kiện</a></li>
+                    <li><a href="contact.html">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-cart" id="btn-cart-trigger" title="Giỏ hàng sách mua" style="margin-right: 8px;">
+                    <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
+                    <span class="cart-badge" id="cart-badge-count">0</span>
+                </button>
+                <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'" title="Trang gợi ý sách AI cá nhân hóa">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                </button>
+                <button class="btn-login" id="btn-login-trigger">
+                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        
+        <!-- Hero Section & Search -->
+        <section class="hero-section">
+            <div class="hero-bg-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+            </div>
+            <div class="hero-content">
+                <h1 class="hero-title">HỆ THỐNG THƯ VIỆN SỐ THÔNG MINH</h1>
+                <p class="hero-subtitle">Tra cứu hàng triệu đầu sách văn học, khoa học, lịch sử và tài liệu nghiên cứu học tập.</p>
+                
+                <!-- Search Bar Card -->
+                <div class="search-card">
+                    <div class="search-tabs">
+                        <button class="search-tab active" data-search-type="all">Tất cả</button>
+                        <button class="search-tab" data-search-type="title">Tên sách</button>
+                        <button class="search-tab" data-search-type="author">Tác giả</button>
+                        <button class="search-tab" data-search-type="subject">Chủ đề</button>
+                    </div>
+                    <div class="search-bar-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon-main"></i>
+                        <input type="text" placeholder="Tìm kiếm sách, tác giả, mã tài liệu học thuật..." class="search-input" id="search-input">
+                        <button class="btn-search-voice" title="Tìm bằng giọng nói">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <button class="btn-search-submit" id="btn-search">
+                            Tìm kiếm <i class="fa-solid fa-arrow-right-long"></i>
+                        </button>
+                    </div>
+                    <div class="search-tags">
+                        <span class="tag-title">Từ khóa hot:</span>
+                        <a href="#" class="search-tag-link">Trí tuệ nhân tạo</a>
+                        <a href="#" class="search-tag-link">Lịch sử Đà Nẵng</a>
+                        <a href="#" class="search-tag-link">Phát triển bản thân</a>
+                        <a href="#" class="search-tag-link">Văn học Việt Nam</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Three Column Grid Layout -->
+        <div class="layout-grid-container">
+            
+            <!-- Column 1: Left Sidebar (Trending Suggestions) -->
+            <aside class="sidebar-column left-sidebar">
+                <div class="sidebar-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-fire text-accent"></i> Sách Thịnh Hành</h2>
+                        <span class="badge-accent">HOT</span>
+                    </div>
+                    <div class="card-body scrollable-container">
+                        <div class="trending-list" id="trending-books-list">
+                            <!-- Trending Item 1 -->
+                            <div class="trending-item">
+                                <div class="rank-badge rank-1">1</div>
+                                <div class="trending-cover cover-gradient-1">
+                                    <span class="cover-text">AI</span>
+                                </div>
+                                <div class="trending-info">
+                                    <h4 class="trending-title">Kỷ Nguyên Trí Tuệ Nhân Tạo</h4>
+                                    <span class="trending-author">TS. Nguyễn Văn A</span>
+                                    <div class="trending-meta">
+                                        <div class="popularity-bar-container">
+                                            <div class="popularity-bar" style="width: 96%;"></div>
+                                        </div>
+                                        <span class="popularity-percent">96% mượn</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Trending Item 2 -->
+                            <div class="trending-item">
+                                <div class="rank-badge rank-2">2</div>
+                                <div class="trending-cover cover-gradient-2">
+                                    <span class="cover-text">ĐN</span>
+                                </div>
+                                <div class="trending-info">
+                                    <h4 class="trending-title">Địa Chí Lịch Sử Đà Nẵng</h4>
+                                    <span class="trending-author">Hội Khoa Học Lịch Sử</span>
+                                    <div class="trending-meta">
+                                        <div class="popularity-bar-container">
+                                            <div class="popularity-bar" style="width: 88%;"></div>
+                                        </div>
+                                        <span class="popularity-percent">88% mượn</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trending Item 3 -->
+                            <div class="trending-item">
+                                <div class="rank-badge rank-3">3</div>
+                                <div class="trending-cover cover-gradient-3">
+                                    <span class="cover-text">KN</span>
+                                </div>
+                                <div class="trending-info">
+                                    <h4 class="trending-title">Tư Duy Ngược & Tư Duy Mở</h4>
+                                    <span class="trending-author">Nguyễn Anh Dũng</span>
+                                    <div class="trending-meta">
+                                        <div class="popularity-bar-container">
+                                            <div class="popularity-bar" style="width: 84%;"></div>
+                                        </div>
+                                        <span class="popularity-percent">84% mượn</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trending Item 4 -->
+                            <div class="trending-item">
+                                <div class="rank-badge">4</div>
+                                <div class="trending-cover cover-gradient-4">
+                                    <span class="cover-text">VH</span>
+                                </div>
+                                <div class="trending-info">
+                                    <h4 class="trending-title">Mắt Biếc (Bản Đặc Biệt)</h4>
+                                    <span class="trending-author">Nguyễn Nhật Ánh</span>
+                                    <div class="trending-meta">
+                                        <div class="popularity-bar-container">
+                                            <div class="popularity-bar" style="width: 79%;"></div>
+                                        </div>
+                                        <span class="popularity-percent">79% mượn</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trending Item 5 -->
+                            <div class="trending-item">
+                                <div class="rank-badge">5</div>
+                                <div class="trending-cover cover-gradient-5">
+                                    <span class="cover-text">KT</span>
+                                </div>
+                                <div class="trending-info">
+                                    <h4 class="trending-title">Kinh Tế Vi Mô Hiện Đại</h4>
+                                    <span class="trending-author">GS. Trần Thanh B</span>
+                                    <div class="trending-meta">
+                                        <div class="popularity-bar-container">
+                                            <div class="popularity-bar" style="width: 72%;"></div>
+                                        </div>
+                                        <span class="popularity-percent">72% mượn</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Column 2: Center (Book Grid Display - Large) -->
+            <section class="center-content">
+                <div class="content-tabs-wrapper">
+                    <div class="content-tabs">
+                        <button class="content-tab active" data-tab="all">Tất cả tài liệu</button>
+                        <button class="content-tab" data-tab="new">Sách mới nhất</button>
+                        <button class="content-tab" data-tab="popular">Xem nhiều nhất</button>
+                        <button class="content-tab" data-tab="digital">Tài liệu số điện tử</button>
+                    </div>
+                    <div class="total-books-indicator">
+                        Hiển thị: <strong id="visible-count">6</strong> kết quả
+                    </div>
+                </div>
+
+                <!-- Book Grid -->
+                <div class="book-grid" id="book-display-grid">
+                    <!-- Book Card 1 -->
+                    <div class="book-card" data-category="ai" data-tag="new">
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock cover-gradient-1">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">TRÍ TUỆ NHÂN TẠO</h3>
+                                    <p class="cover-book-sub">Kỷ Nguyên Công Nghệ Số</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-available">Còn sách</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="alert('Xem chi tiết sách: Kỷ Nguyên Trí Tuệ Nhân Tạo')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                <button class="btn-action-borrow" onclick="borrowBook('Kỷ Nguyên Trí Tuệ Nhân Tạo')"><i class="fa-solid fa-book-open"></i> Đăng ký mượn</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info">
+                            <span class="book-genre">Công nghệ số</span>
+                            <h3 class="book-title" title="Kỷ Nguyên Trí Tuệ Nhân Tạo">Kỷ Nguyên Trí Tuệ Nhân Tạo</h3>
+                            <p class="book-author">TS. Nguyễn Văn A</p>
+                            <div class="book-rating">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                </div>
+                                <span class="rating-text">(4.8)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 2 -->
+                    <div class="book-card" data-category="history" data-tag="popular">
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock cover-gradient-2">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">LỊCH SỬ ĐÀ NẴNG</h3>
+                                    <p class="cover-book-sub">Hành Trình Qua Các Thế Kỷ</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-available">Còn sách</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="alert('Xem chi tiết sách: Địa Chí Lịch SỬ Đà Nẵng')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                <button class="btn-action-borrow" onclick="borrowBook('Địa Chí Lịch Sử Đà Nẵng')"><i class="fa-solid fa-book-open"></i> Đăng ký mượn</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info">
+                            <span class="book-genre">Lịch sử địa phương</span>
+                            <h3 class="book-title" title="Địa Chí Lịch Sử Đà Nẵng">Địa Chí Lịch Sử Đà Nẵng</h3>
+                            <p class="book-author">Hội Khoa Học Lịch Sử</p>
+                            <div class="book-rating">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <span class="rating-text">(5.0)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 3 -->
+                    <div class="book-card" data-category="skills" data-tag="new">
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock cover-gradient-3">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">TƯ DUY NGƯỢC</h3>
+                                    <p class="cover-book-sub">Phá Vỡ Mọi Giới Hạn</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-borrowed">Đang mượn</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="alert('Xem chi tiết sách: Tư Duy Ngược & Tư Duy Mở')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                <button class="btn-action-borrow disabled" disabled><i class="fa-solid fa-clock"></i> Đặt chỗ trước</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info">
+                            <span class="book-genre">Phát triển bản thân</span>
+                            <h3 class="book-title" title="Tư Duy Ngược & Tư Duy Mở">Tư Duy Ngược & Tư Duy Mở</h3>
+                            <p class="book-author">Nguyễn Anh Dũng</p>
+                            <div class="book-rating">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-regular fa-star"></i>
+                                </div>
+                                <span class="rating-text">(4.2)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 4 -->
+                    <div class="book-card" data-category="literature" data-tag="popular">
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock cover-gradient-4">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">MẮT BIẾC</h3>
+                                    <p class="cover-book-sub">Truyện Dài Lãng Mạn</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-available">Còn sách</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="alert('Xem chi tiết sách: Mắt Biếc')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                <button class="btn-action-borrow" onclick="borrowBook('Mắt Biếc')"><i class="fa-solid fa-book-open"></i> Đăng ký mượn</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info">
+                            <span class="book-genre">Văn học nghệ thuật</span>
+                            <h3 class="book-title" title="Mắt Biếc (Bản Đặc Biệt)">Mắt Biếc (Bản Đặc Biệt)</h3>
+                            <p class="book-author">Nguyễn Nhật Ánh</p>
+                            <div class="book-rating">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                </div>
+                                <span class="rating-text">(4.7)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 5 -->
+                    <div class="book-card" data-category="economy" data-tag="digital">
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock cover-gradient-5">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">KINH TẾ VI MÔ</h3>
+                                    <p class="cover-book-sub">Giáo Trình Giảng Dạy</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-digital"><i class="fa-solid fa-laptop"></i> E-Book</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="alert('Đọc trực tuyến Ebook Kinh Tế Vi Mô')"><i class="fa-solid fa-book-reader"></i> Đọc online</button>
+                                <button class="btn-action-borrow" onclick="alert('Đã tải tài liệu PDF về máy!')"><i class="fa-solid fa-download"></i> Tải PDF</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info">
+                            <span class="book-genre">Kinh tế học</span>
+                            <h3 class="book-title" title="Kinh Tế Vi Mô Hiện Đại">Kinh Tế Vi Mô Hiện Đại</h3>
+                            <p class="book-author">GS. Trần Thanh B</p>
+                            <div class="book-rating">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-regular fa-star"></i>
+                                </div>
+                                <span class="rating-text">(4.0)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Book Card 6 -->
+                    <div class="book-card" data-category="ai" data-tag="digital">
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock cover-gradient-6">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">HỌC MÁY CƠ BẢN</h3>
+                                    <p class="cover-book-sub">Lý Thuyết & Ứng Dụng</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-digital"><i class="fa-solid fa-laptop"></i> E-Book</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="alert('Đọc trực tuyến Ebook Học Máy Cơ Bản')"><i class="fa-solid fa-book-reader"></i> Đọc online</button>
+                                <button class="btn-action-borrow" onclick="alert('Đã tải tài liệu PDF về máy!')"><i class="fa-solid fa-download"></i> Tải PDF</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info">
+                            <span class="book-genre">Công nghệ số</span>
+                            <h3 class="book-title" title="Giáo Trình Học Máy Cơ Bản">Giáo Trình Học Máy Cơ Bản</h3>
+                            <p class="book-author">PGS.TS Lê Hoàng C</p>
+                            <div class="book-rating">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <span class="rating-text">(4.9)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Pagination Controls -->
+                <div class="pagination-wrapper" id="homepage-pagination"></div>
+            </section>
+
+            <!-- Column 3: Right Sidebar (Filter & Announcements) -->
+            <aside class="sidebar-column right-sidebar">
+                
+                <!-- Filter Section -->
+                <div class="sidebar-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-filter text-primary"></i> Bộ lọc đầu sách</h2>
+                        <button class="btn-reset-filter" id="btn-reset-filters">Đặt lại</button>
+                    </div>
+                    <div class="card-body">
+                        <form id="filter-form" class="filter-form">
+                            <!-- Category Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Thể loại tài liệu</label>
+                                <select class="filter-select" id="filter-category">
+                                    <option value="all">-- Tất cả thể loại --</option>
+                                    <option value="ai">Công nghệ & Trí Tuệ Nhân Tạo</option>
+                                    <option value="history">Lịch sử địa phương</option>
+                                    <option value="skills">Phát triển bản thân / Kỹ năng</option>
+                                    <option value="literature">Văn học nghệ thuật</option>
+                                    <option value="economy">Kinh tế học</option>
+                                    <option value="science">Khoa học tự nhiên</option>
+                                    <option value="health">Y học & Đời sống</option>
+                                </select>
+                            </div>
+
+                            <!-- Format/Type Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Định dạng tài liệu</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="format" value="paper" checked> Sách giấy truyền thống
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="format" value="ebook" checked> Ebook (Sách điện tử)
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="format" value="journal" checked> Tạp chí / Báo khoa học
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Availability Filter -->
+                            <div class="filter-group">
+                                <label class="filter-label">Tình trạng</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="status-filter" value="all" checked> Tất cả sách
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="status-filter" value="available"> Sách hiện còn sẵn
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-apply-filters" id="btn-apply-filter">
+                                Áp dụng bộ lọc
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Announcements Section -->
+                <div class="sidebar-card margin-top-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-bullhorn text-accent"></i> Thông báo & Sự kiện</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="announcement-list">
+                            <!-- Announcement 1 -->
+                            <div class="announcement-item">
+                                <span class="announce-date">05 Th07</span>
+                                <div class="announce-content">
+                                    <h4 class="announce-title"><a href="#">Hội Sách "Đọc để Phát Triển" 2026</a></h4>
+                                    <p class="announce-desc">Trưng bày 5000+ tựa sách khoa học công nghệ mới tại Quảng trường Thư viện.</p>
+                                </div>
+                            </div>
+
+                            <!-- Announcement 2 -->
+                            <div class="announcement-item">
+                                <span class="announce-date">08 Th07</span>
+                                <div class="announce-content">
+                                    <h4 class="announce-title"><a href="#">Hội thảo: Ứng dụng ChatGPT trong Học tập</a></h4>
+                                    <p class="announce-desc">Trao đổi và hướng dẫn sinh viên khai thác thông tin học thuật an toàn từ AI.</p>
+                                </div>
+                            </div>
+
+                            <!-- Announcement 3 -->
+                            <div class="announcement-item">
+                                <span class="announce-date">12 Th07</span>
+                                <div class="announce-content">
+                                    <h4 class="announce-title"><a href="#">Bảo trì máy chủ Hệ thống Thư viện số</a></h4>
+                                    <p class="announce-desc">Hệ thống mượn sách online sẽ tạm đóng để nâng cấp từ 22:00 đến 02:00 ngày 12/07.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo-area-footer">
+                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
+                    <span class="footer-title">Thư viện Đà Nẵng</span>
+                </div>
+                <p class="footer-desc">Hệ thống thư viện hiện đại hàng đầu khu vực miền Trung, kết nối cộng đồng bạn đọc và hỗ trợ học tập suốt đời.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links-group">
+                <h4 class="footer-heading">Liên kết nhanh</h4>
+                <ul>
+                    <li><a href="#">Tra cứu OPAC</a></li>
+                    <li><a href="#">Tài nguyên số nội sinh</a></li>
+                    <li><a href="#">Luận văn - Luận án</a></li>
+                    <li><a href="#">Hướng dẫn mượn trả</a></li>
+                    <li><a href="#">Đăng ký thẻ thư viện số</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-group">
+                <h4 class="footer-heading">Giờ làm việc</h4>
+                <ul class="work-hours-list">
+                    <li><span>Thứ Hai - Thứ Sáu:</span> <strong>07:30 - 21:00</strong></li>
+                    <li><span>Thứ Bảy - Chủ Nhật:</span> <strong>08:00 - 17:00</strong></li>
+                    <li><span class="text-accent">* Ngày lễ:</span> <strong>Nghỉ theo quy định</strong></li>
+                </ul>
+            </div>
+
+            <div class="footer-info">
+                <h4 class="footer-heading">Thông tin liên hệ</h4>
+                <address>
+                    <p><i class="fa-solid fa-map-location-dot"></i> 46 Bạch Đằng, Hải Châu, Đà Nẵng, Việt Nam</p>
+                    <p><i class="fa-solid fa-phone"></i> (0236) 3822603</p>
+                    <p><i class="fa-solid fa-envelope"></i> tvdn@danang.gov.vn</p>
+                    <p><i class="fa-solid fa-globe"></i> thuvien.danang.gov.vn</p>
+                </address>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu. <span class="footer-bottom-slogan">Kết nối tri thức - Phát triển cộng đồng.</span></p>
+        </div>
+    </footer>
+
+    <!-- Floating Chatbot AI Widget -->
+    <div class="chatbot-widget-container" id="chatbot-widget">
+        <!-- Floating Button -->
+        <button class="chatbot-trigger" id="chatbot-trigger" title="Nhấp để hỏi Trợ lý AI Thư Viện">
+            <span class="pulse-ring"></span>
+            <i class="fa-solid fa-robot"></i>
+            <span class="chatbot-trigger-text">Hỏi AI</span>
+        </button>
+
+        <!-- Chat Box Window (Hidden by default) -->
+        <div class="chatbox-window" id="chatbox-window">
+            <div class="chatbox-header">
+                <div class="chatbot-avatar-status">
+                    <div class="chatbot-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                        <span class="status-dot"></span>
+                    </div>
+                    <div class="chatbot-header-info">
+                        <h4 class="chatbot-name">Trợ lý AI Thư Viện</h4>
+                        <span class="chatbot-status">Đang trực tuyến</span>
+                    </div>
+                </div>
+                <div class="chatbox-header-actions">
+                    <button class="btn-chat-action" id="btn-chat-minimize" title="Thu nhỏ"><i class="fa-solid fa-minus"></i></button>
+                    <button class="btn-chat-action" id="btn-chat-close" title="Đóng"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <div class="chatbox-messages" id="chatbox-messages">
+                <!-- Welcome Message -->
+                <div class="chat-message bot-message">
+                    <div class="message-content">
+                        Xin chào! Tôi là Trợ lý AI của Thư viện Đà Nẵng. 📚 Tôi có thể giúp bạn tìm sách, gợi ý tài liệu học tập hoặc giải đáp các thắc mắc về thư viện. Bạn muốn tìm hiểu gì hôm nay?
+                    </div>
+                    <span class="message-time">Vừa xong</span>
+                </div>
+            </div>
+
+            <div class="chatbox-input-area">
+                <input type="text" placeholder="Nhập câu hỏi tìm sách của bạn..." id="chatbox-input">
+                <button class="btn-send-message" id="btn-send-chat">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal-overlay" id="login-modal">
+        <div class="login-modal-card">
+            <button class="login-modal-close" id="btn-login-close"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-header">
+                <img src="assets/logo.png" alt="Logo Thư viện" class="login-logo">
+                <h3>Đăng nhập Bạn đọc</h3>
+                <p>Nhập mã số thẻ thư viện để tiếp tục sử dụng các dịch vụ số</p>
+            </div>
+            <form class="login-form" id="login-form" onsubmit="event.preventDefault(); alert('Đăng nhập thành công với tài khoản demo!'); document.getElementById('login-modal').classList.remove('active');">
+                <div class="form-group">
+                    <label for="login-username"><i class="fa-solid fa-id-card"></i> Mã thẻ / Email</label>
+                    <input type="text" id="login-username" required placeholder="Ví dụ: TVDN-123456" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label for="login-password"><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+                    <input type="password" id="login-password" required placeholder="Nhập mật khẩu thẻ..." class="form-input">
+                </div>
+                <div class="form-meta">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="remember-login"> Ghi nhớ đăng nhập
+                    </label>
+                    <a href="#" class="forgot-pass-link">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="btn-login-submit">Đăng nhập ngay</button>
+                <div class="login-divider"><span>Hoặc đăng nhập nhanh qua</span></div>
+                <div class="social-login-buttons">
+                    <button type="button" class="btn-social-login google-login"><i class="fa-brands fa-google"></i> Google</button>
+                    <button type="button" class="btn-social-login facebook-login"><i class="fa-brands fa-facebook"></i> Facebook</button>
+                </div>
+                <p class="signup-prompt">Chưa có tài khoản? <a href="#" onclick="showAlert('Đăng ký thẻ mới', 'Để đăng ký thẻ thư viện mới, vui lòng mang theo CMND/CCCD đến trực tiếp quầy thủ thư tại Tầng 1 - Thư viện Đà Nẵng.', 'info')">Đăng ký thẻ mới tại đây</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- BORROW CONFIRMATION MODAL -->
+    <div class="login-modal-overlay" id="borrow-confirm-modal">
+        <div class="login-modal-card" style="width: 460px;">
+            <button class="login-modal-close" onclick="closeBorrowModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-header" style="margin-bottom: 20px;">
+                <h3 style="font-size: 1.25rem;"><i class="fa-solid fa-file-invoice text-secondary" style="color:var(--secondary-color); margin-right:8px;"></i> Xác nhận phiếu mượn tài liệu</h3>
+                <p>Vui lòng kiểm tra lại thông tin đăng ký mượn bên dưới</p>
+            </div>
+            
+            <div style="background-color:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:18px; margin-bottom:20px; display:flex; flex-direction:column; gap:12px; font-size:0.85rem; text-align:left;">
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e2e8f0; padding-bottom:6px;">
+                    <span style="color:var(--text-muted); font-weight:600;">Mã tài liệu:</span>
+                    <strong id="confirm-book-id" style="color:var(--primary-color);">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e2e8f0; padding-bottom:6px;">
+                    <span style="color:var(--text-muted); font-weight:600;">Thể loại:</span>
+                    <strong id="confirm-book-genre" style="color:var(--primary-color);">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e2e8f0; padding-bottom:6px;">
+                    <span style="color:var(--text-muted); font-weight:600;">Tên cuốn sách:</span>
+                    <strong id="confirm-book-title" style="color:var(--primary-color); text-align:right; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e2e8f0; padding-bottom:6px;">
+                    <span style="color:var(--text-muted); font-weight:600;">Người mượn:</span>
+                    <strong id="confirm-borrower-name" style="color:var(--primary-color);">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #e2e8f0; padding-bottom:6px;">
+                    <span style="color:var(--text-muted); font-weight:600;">Ngày mượn:</span>
+                    <strong id="confirm-borrow-date" style="color:var(--primary-color);">-</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding-bottom:4px;">
+                    <span style="color:var(--text-muted); font-weight:600;">Thời gian mượn:</span>
+                    <strong style="color:var(--secondary-color);">14 ngày (Gia hạn tối đa 1 lần)</strong>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:12px; justify-content:flex-end;">
+                <button class="btn-login" style="width:auto; padding:10px 20px; border-color:var(--border-color); color:var(--text-dark);" onclick="closeBorrowModal()">Hủy bỏ</button>
+                <button class="btn-search-submit" style="width:auto; padding:10px 24px; background-color:var(--primary-color);" id="btn-confirm-borrow-execute"><i class="fa-solid fa-circle-check"></i> Xác nhận mượn</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHOPPING CART MODAL -->
+    <div class="login-modal-overlay" id="cart-modal">
+        <div class="cart-modal-card">
+            <button class="login-modal-close" onclick="closeCartModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="login-header" style="margin-bottom: 20px;">
+                <h3><i class="fa-solid fa-cart-shopping text-secondary" style="color:var(--secondary-color); margin-right:8px;"></i> Giỏ hàng sách của bạn</h3>
+                <p>Mua sách giấy sở hữu vĩnh viễn, ủng hộ doanh thu duy trì hoạt động thư viện</p>
+            </div>
+            
+            <div style="max-height: 250px; overflow-y: auto;">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Tên sách</th>
+                            <th>Đơn giá</th>
+                            <th style="width: 100px; text-align: center;">Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-table-body">
+                        <!-- Danh sách sản phẩm -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-total-section">
+                <span>Tổng giá trị đơn hàng:</span>
+                <span id="cart-total-amount" style="color: #e11d48; font-size: 1.3rem;">0đ</span>
+            </div>
+
+            <!-- Form checkout -->
+            <form class="cart-checkout-form" id="cart-checkout-form" onsubmit="executeCartCheckout(event)">
+                <h4>Thông tin giao hàng & thanh toán</h4>
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="cart-fullname" style="font-size: 0.8rem; font-weight: 600; color: var(--text-dark);">Họ và tên người nhận</label>
+                        <input type="text" id="cart-fullname" required placeholder="Ví dụ: Trần Lê Quốc Thịnh" style="padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.85rem;">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="cart-phone" style="font-size: 0.8rem; font-weight: 600; color: var(--text-dark);">Số điện thoại</label>
+                        <input type="tel" id="cart-phone" required placeholder="Ví dụ: 0905123456" style="padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.85rem;">
+                    </div>
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;">
+                    <label for="cart-address" style="font-size: 0.8rem; font-weight: 600; color: var(--text-dark);">Địa chỉ nhận hàng (Đà Nẵng)</label>
+                    <input type="text" id="cart-address" required placeholder="Số nhà, tên đường, quận/huyện..." style="padding: 8px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.85rem;">
+                </div>
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px;">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-dark);">Phương thức thanh toán</label>
+                    <div style="display: flex; gap: 15px; font-size: 0.85rem;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="radio" name="cart-pay-method" value="bank" checked> Chuyển khoản VietQR Ngân hàng
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="radio" name="cart-pay-method" value="momo"> Ví điện tử MoMo
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 15px;">
+                    <button type="button" class="btn-login" style="width: auto; padding: 10px 20px; border-color: var(--border-color); color: var(--text-dark);" onclick="closeCartModal()">Tiếp tục mua sách</button>
+                    <button type="submit" class="btn-search-submit" style="width: auto; padding: 10px 24px; background-color: #10b981; border: none; color: white;"><i class="fa-solid fa-credit-card"></i> Xác nhận đặt hàng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BOOK DETAIL MODAL -->
+    <div class="login-modal-overlay" id="book-detail-modal">
+        <div class="login-modal-card" style="width: 600px; max-width: 95%;">
+            <button class="login-modal-close" onclick="closeBookDetailModal()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div style="display: grid; grid-template-columns: 180px 1fr; gap: 24px; text-align: left; align-items: start; margin-top: 10px;">
+                <!-- Cover Image/Gradient -->
+                <div style="width: 100%; height: 260px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-md); position: relative;">
+                    <img id="detail-book-img" src="" alt="Bìa sách" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    <div id="detail-book-gradient" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; text-align: center; padding: 15px; text-transform: uppercase;"></div>
+                </div>
+
+                <!-- Info Fields -->
+                <div>
+                    <h3 id="detail-book-title" style="font-size: 1.4rem; font-weight: 800; color: var(--primary-color); margin-bottom: 8px; line-height: 1.3;"></h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+                        <span id="detail-book-genre-badge" class="badge badge-pending" style="background-color: var(--accent-bg); color: var(--accent-dark); font-weight: 600;"></span>
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 10px 15px; font-size: 0.9rem; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <span style="font-weight: 600; color: var(--text-muted);">Tác giả:</span>
+                        <strong id="detail-book-author" style="color: var(--text-dark);"></strong>
+
+                        <span style="font-weight: 600; color: var(--text-muted);">Nhà xuất bản:</span>
+                        <span id="detail-book-publisher"></span>
+
+                        <span style="font-weight: 600; color: var(--text-muted);">Năm phát hành:</span>
+                        <span id="detail-book-year"></span>
+
+                        <span style="font-weight: 600; color: var(--text-muted);">Giá sách giấy:</span>
+                        <strong id="detail-book-price" style="color: #e11d48;"></strong>
+
+                        <span style="font-weight: 600; color: var(--text-muted);">Trạng thái kệ:</span>
+                        <span id="detail-book-stock"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px; text-align: left;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary-color); margin-bottom: 8px;"><i class="fa-solid fa-file-lines"></i> Tóm tắt & Mô tả sách</h4>
+                <p id="detail-book-desc" style="font-size: 0.88rem; line-height: 1.6; color: var(--text-dark); background-color: #f8fafc; padding: 15px; border-radius: var(--radius-sm); border-left: 4px solid var(--secondary-color);"></p>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;" id="detail-book-actions">
+                <!-- Action buttons (borrow, buy, read online) are rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications library -->
+    <script src="notifications.js"></script>
+    <!-- Main JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

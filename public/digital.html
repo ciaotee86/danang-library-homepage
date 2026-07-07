@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài liệu số & Ebooks - Thư viện Đà Nẵng</title>
+    <meta name="description" content="Đọc trực tuyến giáo trình số, tải tệp tin PDF tài liệu nghiên cứu học thuật của Thư viện Đà Nẵng.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .digital-banner-card {
+            background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
+            color: var(--white);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+        }
+
+        .pdf-viewer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdf-viewer-card {
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pdf-viewer-header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-viewer-body {
+            flex-grow: 1;
+            background-color: #525659;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .pdf-page-mockup {
+            background-color: var(--white);
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area" onclick="window.location.href='index.html'" style="cursor: pointer;">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
+                <div class="logo-text">
+                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="search.html">Tra cứu</a></li>
+                    <li><a href="digital.html" class="active">Tài liệu số</a></li>
+                    <li><a href="events.html">Sự kiện</a></li>
+                    <li><a href="contact.html">Liên hệ</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                </button>
+                <button class="btn-login" id="btn-login-trigger">
+                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        
+        <div class="digital-banner-card">
+            <div>
+                <h2 style="font-size:1.4rem; font-weight:800; color:white; margin-bottom:8px;">Kho Tài Nguyên Số & Ebook Nội Sinh</h2>
+                <p style="font-size:0.85rem; color:rgba(255,255,255,0.85);">Truy cập tức thời hàng ngàn tài liệu số hóa, báo cáo khoa học, sách giáo trình điện tử được biên soạn bởi các giảng viên và chuyên gia.</p>
+            </div>
+            <i class="fa-solid fa-laptop-code" style="font-size:4rem; color:rgba(255,255,255,0.15);"></i>
+        </div>
+
+        <h3 class="card-title" style="margin-bottom:20px;"><i class="fa-solid fa-book-open text-secondary"></i> Giáo trình & Ebooks trực tuyến hiện có</h3>
+        
+        <!-- Book Grid showing ONLY digital books -->
+        <div class="book-grid" id="digital-books-grid">
+            <!-- Loaded dynamically -->
+        </div>
+
+    </main>
+
+    <!-- PDF Viewer Modal -->
+    <div class="pdf-viewer-overlay" id="pdf-viewer">
+        <div class="pdf-viewer-card">
+            <div class="pdf-viewer-header">
+                <h3 style="font-size:1rem; color:white;" id="pdf-viewer-title">Đang đọc tài liệu</h3>
+                <button onclick="closePdfViewer()" style="color:white; font-size:1.2rem; background:none; border:none; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="pdf-viewer-body">
+                <div class="pdf-page-mockup">
+                    <div style="border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                        <h2 style="font-size:1.1rem; color:var(--primary-color);" id="pdf-mock-title">TÊN TÀI LIỆU</h2>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">Trang 1 / 45 • Phiên bản kỹ thuật số</span>
+                    </div>
+                    <div style="flex-grow:1; padding-top:20px; font-size:0.85rem; line-height:1.6; color:var(--text-dark);">
+                        <strong>CHƯƠNG 1: GIỚI THIỆU CHUNG</strong>
+                        <p style="margin-top:10px;">Đây là nội dung mô phỏng bản đọc trực tuyến (Ebook Reader) của Thư viện số Đà Nẵng. Tài liệu này được bảo hộ bản quyền số DRM và chỉ cấp quyền đọc trực tuyến hoặc tải tệp PDF có gắn watermark cho tài khoản bạn đọc hợp lệ.</p>
+                        <p style="margin-top:10px;">Hệ thống hỗ trợ phóng to, thu nhỏ và ghi chú thông minh trên lề sách điện tử.</p>
+                    </div>
+                    <div style="text-align:center; border-top:1px solid var(--border-color); padding-top:10px; font-size:0.7rem; color:var(--text-muted);">
+                        Thư viện Tổng hợp Đà Nẵng - 46 Bạch Đằng
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo-area-footer">
+                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
+                    <span class="footer-title">Thư viện Đà Nẵng</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // === 1. Kiểm tra đăng nhập Header ===
+            const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
+            const headerActions = document.querySelector('.header-actions');
+            if (headerActions && loggedUser) {
+                const adminButton = loggedUser.role === 'admin' 
+                    ? `<button class="btn-login" onclick="window.location.href='admin.html'" style="border-color:var(--secondary-color); color:var(--secondary-color); background-color:#eff6ff;"><i class="fa-solid fa-gauge-high"></i> Quản trị</button>` 
+                    : '';
+                headerActions.innerHTML = `
+                    <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                    </button>
+                    ${adminButton}
+                    <div class="user-greeting-badge" onclick="window.location.href='profile.html'" style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600; color:var(--primary-color); cursor:pointer;" title="Trang cá nhân bạn đọc">
+                        <i class="fa-solid fa-user-circle" style="font-size:1.15rem; color:var(--secondary-color);"></i> Hi, ${loggedUser.fullname}
+                    </div>
+                    <button class="btn-login" id="btn-logout" style="border-color:#fca5a5; color:#e11d48; background-color:#fff1f2;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </button>
+                `;
+                document.getElementById('btn-logout').addEventListener('click', () => {
+                    sessionStorage.removeItem('tvdn_logged_in_user');
+                    window.location.reload();
+                });
+            } else if (headerActions) {
+                headerActions.innerHTML = `
+                    <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
+                    </button>
+                    <button class="btn-login" onclick="window.location.href='login.html'">
+                        <i class="fa-solid fa-user-tie"></i> Đăng nhập
+                    </button>
+                `;
+            }
+
+            // === 2. Tải sách số ===
+            loadDigitalBooks();
+        });
+
+        async function loadDigitalBooks() {
+            const grid = document.getElementById('digital-books-grid');
+            if (!grid) return;
+
+            try {
+                const res = await fetch('/api/books');
+                const books = await res.json();
+                
+                const digitalBooks = books.filter(b => b.status === 'digital');
+                grid.innerHTML = '';
+
+                digitalBooks.forEach(b => {
+                    const card = document.createElement('div');
+                    card.className = 'book-card';
+                    card.innerHTML = `
+                        <div class="book-card-cover-wrapper">
+                            <div class="book-cover-mock ${b.coverGradient}">
+                                <div class="cover-accent-line"></div>
+                                <div class="cover-content">
+                                    <h3 class="cover-book-title">${b.title.toUpperCase()}</h3>
+                                    <p class="cover-book-sub">${b.author}</p>
+                                </div>
+                            </div>
+                            <span class="badge-status status-digital"><i class="fa-solid fa-laptop"></i> E-Book</span>
+                            <div class="book-card-hover-overlay">
+                                <button class="btn-action-view" onclick="openPdfViewer('${b.title}')"><i class="fa-solid fa-book-reader"></i> Đọc online</button>
+                                <button class="btn-action-borrow" onclick="downloadEbook()"><i class="fa-solid fa-download"></i> Tải PDF</button>
+                            </div>
+                        </div>
+                        <div class="book-card-info" style="padding:15px;">
+                            <span class="book-genre">${b.categoryName}</span>
+                            <h3 class="book-title" title="${b.title}" style="font-size:0.85rem; height:40px; overflow:hidden;">${b.title}</h3>
+                            <p class="book-author" style="font-size:0.75rem;">${b.author}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function openPdfViewer(title) {
+            document.getElementById('pdf-viewer-title').textContent = `Đang đọc online: ${title}`;
+            document.getElementById('pdf-mock-title').textContent = title.toUpperCase();
+            document.getElementById('pdf-viewer').style.display = 'flex';
+        }
+
+        function closePdfViewer() {
+            document.getElementById('pdf-viewer').style.display = 'none';
+        }
+
+        function downloadEbook() {
+            showToast('Bắt đầu tải tệp tin Ebook PDF về máy độc giả...', 'success');
+        }
+    </script>
+</body>
+</html>

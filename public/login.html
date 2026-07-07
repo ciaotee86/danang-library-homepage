@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Hệ thống Thư viện Đà Nẵng</title>
+    <meta name="description" content="Đăng nhập để mượn sách, tra cứu tài liệu học thuật và quản lý thẻ thư viện số Đà Nẵng.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Official Google OAuth Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Main Style -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background-color: var(--primary-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-page-container {
+            background-color: var(--bg-card);
+            width: 100%;
+            max-width: 960px;
+            height: 600px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Left Panel - Forms */
+        .login-panel-left {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo-back-to-home {
+            position: absolute;
+            top: 30px;
+            left: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .logo-back-to-home:hover {
+            color: var(--secondary-color);
+        }
+
+        .form-title-area {
+            margin-bottom: 24px;
+        }
+
+        .form-title-area h2 {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            margin-bottom: 6px;
+        }
+
+        .form-title-area p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .login-page-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-tab-toggle {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-tab-toggle a {
+            font-weight: 700;
+            color: var(--accent-dark);
+        }
+
+        .btn-page-submit {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            color: var(--white);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(30, 107, 123, 0.2);
+        }
+
+        .btn-page-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 107, 123, 0.3);
+        }
+
+        /* Right Panel - OAuth Mockups */
+        .login-panel-right {
+            background: linear-gradient(135deg, #07192b 0%, #112e51 100%);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            border-left: 1px solid var(--border-color);
+        }
+
+        .oauth-heading {
+            color: var(--white);
+            font-size: 1.15rem;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .oauth-btn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            max-width: 280px;
+            align-items: center;
+        }
+
+        .btn-oauth {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--white);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: var(--transition-smooth);
+            width: 100%;
+        }
+
+        .btn-oauth:hover {
+            background-color: var(--white);
+            color: var(--primary-dark);
+            border-color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        .btn-google-oauth:hover {
+            box-shadow: 0 4px 15px rgba(219, 68, 55, 0.25);
+        }
+
+        .lib-info-badge {
+            margin-top: 50px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        /* Google Login Modal Mockup */
+        .google-mock-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .google-mock-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .google-mock-card {
+            background-color: var(--white);
+            width: 380px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            padding: 24px;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            color: #202124;
+            text-align: left;
+            transform: scale(0.95);
+            transition: var(--transition-smooth);
+        }
+
+        .google-mock-modal.active .google-mock-card {
+            transform: scale(1);
+        }
+
+        .g-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .g-logo {
+            font-family: 'Product Sans', 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .g-logo span:nth-child(1) { color: #4285F4; }
+        .g-logo span:nth-child(2) { color: #EA4335; }
+        .g-logo span:nth-child(3) { color: #FBBC05; }
+        .g-logo span:nth-child(4) { color: #4285F4; }
+        .g-logo span:nth-child(5) { color: #34A853; }
+        .g-logo span:nth-child(6) { color: #EA4335; }
+
+        .g-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #202124;
+            margin-bottom: 4px;
+        }
+
+        .g-subtitle {
+            font-size: 0.85rem;
+            color: #5f6368;
+        }
+
+        .g-accounts-list {
+            margin-top: 15px;
+            border-top: 1px solid #dadce0;
+            border-bottom: 1px solid #dadce0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .g-account-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .g-account-item:last-child {
+            border-bottom: none;
+        }
+
+        .g-account-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .g-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .g-avatar-blue { background-color: #4285f4; }
+        .g-avatar-green { background-color: #34a853; }
+
+        .g-acc-info {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.85rem;
+        }
+
+        .g-acc-name {
+            font-weight: 600;
+            color: #3c4043;
+        }
+
+        .g-acc-email {
+            color: #5f6368;
+            font-size: 0.75rem;
+        }
+
+        .g-footer {
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: #5f6368;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .g-footer a {
+            color: #1a73e8;
+        }
+
+        @media (max-width: 768px) {
+            .login-page-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                max-width: 450px;
+            }
+
+            .login-panel-right {
+                padding: 40px;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .login-panel-left {
+                padding: 40px;
+            }
+
+            .logo-back-to-home {
+                position: static;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Container -->
+    <div class="login-page-container">
+        
+        <!-- Left Panel: Forms (Normal Email / Card ID) -->
+        <div class="login-panel-left">
+            <a href="index.html" class="logo-back-to-home">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ
+            </a>
+
+            <!-- LOGIN VIEW -->
+            <div id="login-view">
+                <div class="form-title-area">
+                    <h2>Đăng nhập Bạn đọc / Thủ thư</h2>
+                    <p>Nhập thông tin thẻ thư viện số của bạn</p>
+                </div>
+
+                <form class="login-page-form" id="page-login-form">
+                    <div class="form-group">
+                        <label for="page-username"><i class="fa-solid fa-user"></i> Tên đăng nhập / Mã thẻ</label>
+                        <input type="text" id="page-username" placeholder="Ví dụ: admin hoặc reader1" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="page-password"><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+                        <input type="password" id="page-password" placeholder="Nhập mật khẩu..." required class="form-input">
+                    </div>
+                    <div class="form-meta">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="page-remember"> Ghi nhớ đăng nhập
+                        </label>
+                        <a href="#" class="forgot-pass-link" onclick="alert('Vui lòng mang CCCD liên hệ quầy Thủ thư để cấp lại mật khẩu thẻ.')">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="btn-page-submit">Đăng nhập hệ thống</button>
+                </form>
+
+                <div class="form-tab-toggle">
+                    Chưa có tài khoản? <a href="#" id="toggle-to-register">Đăng ký thẻ mới</a>
+                </div>
+            </div>
+
+            <!-- REGISTER VIEW (Hidden by default) -->
+            <div id="register-view" style="display: none;">
+                <div class="form-title-area">
+                    <h2>Đăng ký Thẻ Bạn đọc Mới</h2>
+                    <p>Tạo tài khoản học tập trực tuyến ngay lập tức</p>
+                </div>
+
+                <form class="login-page-form" id="page-register-form">
+                    <div class="form-group">
+                        <label for="reg-fullname"><i class="fa-solid fa-id-card"></i> Họ và Tên</label>
+                        <input type="text" id="reg-fullname" placeholder="Nhập họ và tên..." required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-username"><i class="fa-solid fa-user"></i> Tên đăng nhập</label>
+                        <input type="text" id="reg-username" placeholder="Viết liền không dấu, ví dụ: hoangnam" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-phone"><i class="fa-solid fa-phone"></i> Số điện thoại</label>
+                        <input type="tel" id="reg-phone" placeholder="Nhập số điện thoại di động..." required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password"><i class="fa-solid fa-lock"></i> Mật khẩu</label>
+                        <input type="password" id="reg-password" placeholder="Nhập mật khẩu bảo mật..." required class="form-input">
+                    </div>
+                    <button type="submit" class="btn-page-submit">Đăng ký thẻ thư viện</button>
+                </form>
+
+                <div class="form-tab-toggle">
+                    Đã có tài khoản? <a href="#" id="toggle-to-login">Đăng nhập tại đây</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Google & Microsoft OAuth logins -->
+        <div class="login-panel-right">
+            <h3 class="oauth-heading">Cổng Xác Thực Liên Kết</h3>
+            <p style="font-size: 0.8rem; line-height: 1.5; margin-bottom: 30px; color: rgba(255,255,255,0.7);">
+                Sử dụng tài khoản học tập/văn phòng liên kết để đăng nhập nhanh chóng mà không cần đăng ký.
+            </p>
+
+            <div class="oauth-btn-list">
+                <!-- OFFICIAL GOOGLE ONE TAP AND SIGN IN WIDGET -->
+                <!-- Google Client ID dynamically loaded. If configured on Google Developer Console, it will automatically render here -->
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleCredentialResponse"
+                     data-auto_prompt="false"
+                     style="width: 100%; display: flex; justify-content: center; margin-bottom: 10px;">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     style="width: 100%; max-width: 280px;">
+                </div>
+
+                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger" style="margin-top: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width:18px;">
+                    Google Login (Simulate Fallback)
+                </button>
+
+                <button class="btn-oauth" onclick="alert('Đăng nhập Microsoft đang bảo trì, vui lòng sử dụng tài khoản Google!')" style="margin-top: 10px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" style="width:18px;">
+                    Đăng nhập bằng Microsoft
+                </button>
+            </div>
+
+            <div class="lib-info-badge">
+                <p><strong>CỔNG THÔNG TIN THƯ VIỆN SỐ ĐÀ NẴNG</strong></p>
+                <p>Hỗ trợ kỹ thuật: support@danang.gov.vn</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Consent Screen Popup Simulator -->
+    <div class="google-mock-modal" id="google-modal">
+        <div class="google-mock-card">
+            <div class="g-header">
+                <div class="g-logo">
+                    <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
+                </div>
+                <h3 class="g-title">Đăng nhập bằng Google (Mock)</h3>
+                <p class="g-subtitle">để tiếp tục đến Thư viện Đà Nẵng</p>
+            </div>
+            
+            <div class="g-accounts-list">
+                <!-- User Account 1 -->
+                <div class="g-account-item" data-username="reader1" data-fullname="Lê Hoàng Nam" data-email="hoangnam.le@gmail.com">
+                    <div class="g-avatar g-avatar-blue">N</div>
+                    <div class="g-acc-info">
+                        <span class="g-acc-name">Lê Hoàng Nam</span>
+                        <span class="g-acc-email">hoangnam.le@gmail.com</span>
+                    </div>
+                </div>
+
+                <!-- User Account 2 -->
+                <div class="g-account-item" data-username="reader2" data-fullname="Trần Thị Mỹ Linh" data-email="mylinh.tran99@gmail.com">
+                    <div class="g-avatar g-avatar-green">L</div>
+                    <div class="g-acc-info">
+                        <span class="g-acc-name">Trần Thị Mỹ Linh</span>
+                        <span class="g-acc-email">mylinh.tran99@gmail.com</span>
+                    </div>
+                </div>
+
+                <!-- Admin Account -->
+                <div class="g-account-item" data-username="admin" data-fullname="Nguyễn Văn Thủ Thư" data-email="admin@tvdn.gov.vn">
+                    <div class="g-avatar" style="background-color: #5f6368;">A</div>
+                    <div class="g-acc-info">
+                        <span class="g-acc-name">Nguyễn Văn Thủ Thư (Thủ thư)</span>
+                        <span class="g-acc-email">admin@tvdn.gov.vn</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="g-account-item" onclick="alert('Đăng ký tài khoản Gmail mới trên trình duyệt trước!'); document.getElementById('google-modal').classList.remove('active');">
+                <div class="g-avatar" style="background-color: #f1f3f4; color: #5f6368;"><i class="fa-solid fa-user-plus"></i></div>
+                <div class="g-acc-info">
+                    <span class="g-acc-name" style="color: #1a73e8; font-weight: 500;">Sử dụng một tài khoản khác</span>
+                </div>
+            </div>
+
+            <div class="g-footer">
+                Để tiếp tục, Google sẽ chia sẻ tên, địa chỉ email, tùy chọn ngôn ngữ và ảnh hồ sơ của bạn với Thư viện Đà Nẵng. <a href="#">Chính sách bảo mật</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications library -->
+    <script src="notifications.js"></script>
+    <script>
+        // Callback tiếp nhận Google Credential Token thực tế từ Google Button
+        async function handleGoogleCredentialResponse(response) {
+            try {
+                const res = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential: response.credential })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                    alert(`Đăng nhập Google thành công!\nXin chào bạn: ${data.user.fullname}`);
+                    
+                    if (data.user.role === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert('Lỗi đăng nhập Google: ' + data.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Có lỗi xảy ra khi xác thực Google API.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Chuyển đổi giữa Đăng nhập và Đăng ký
+            const toggleToRegister = document.getElementById('toggle-to-register');
+            const toggleToLogin = document.getElementById('toggle-to-login');
+            const loginView = document.getElementById('login-view');
+            const registerView = document.getElementById('register-view');
+
+            if (toggleToRegister && toggleToLogin && loginView && registerView) {
+                toggleToRegister.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loginView.style.display = 'none';
+                    registerView.style.display = 'block';
+                });
+
+                toggleToLogin.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    registerView.style.display = 'none';
+                    loginView.style.display = 'block';
+                });
+            }
+
+            // Xử lý Form đăng ký
+            const registerForm = document.getElementById('page-register-form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const fullname = document.getElementById('reg-fullname').value;
+                    const username = document.getElementById('reg-username').value.trim().toLowerCase();
+                    const phone = document.getElementById('reg-phone').value;
+                    const password = document.getElementById('reg-password').value;
+
+                    try {
+                        const res = await fetch('/api/auth/register', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, password, fullname, phone })
+                        });
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            alert(`Đăng ký thẻ thư viện thành công!\nMã thẻ bạn đọc: ${data.user.cardId}\nTên đăng nhập: ${data.user.username}`);
+                            sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                            window.location.href = 'index.html';
+                        } else {
+                            alert('Đăng ký thất bại: ' + data.message);
+                        }
+                    } catch (err) {
+                        alert('Lỗi kết nối API Server đăng ký.');
+                    }
+                });
+            }
+
+            // Xử lý Form đăng nhập thường
+            const loginForm = document.getElementById('page-login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('page-username').value.trim();
+                    const password = document.getElementById('page-password').value;
+
+                    try {
+                        const res = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, password })
+                        });
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                            alert(`Đăng nhập thành công! Xin chào ${data.user.fullname}`);
+                            
+                            if (data.user.role === 'admin') {
+                                window.location.href = 'admin.html';
+                            } else {
+                                window.location.href = 'index.html';
+                            }
+                        } else {
+                            alert('Đăng nhập thất bại: ' + data.message);
+                        }
+                    } catch (err) {
+                        alert('Lỗi kết nối API Server đăng nhập.');
+                    }
+                });
+            }
+
+            // Xử lý Đăng nhập Google giả lập (Simulate fallback button)
+            const googleTrigger = document.getElementById('btn-google-trigger');
+            const googleModal = document.getElementById('google-modal');
+            const googleAccountItems = document.querySelectorAll('.g-account-item');
+
+            if (googleTrigger && googleModal) {
+                googleTrigger.addEventListener('click', () => {
+                    googleModal.classList.add('active');
+                });
+
+                googleModal.addEventListener('click', (e) => {
+                    if (e.target === googleModal) {
+                        googleModal.classList.remove('active');
+                    }
+                });
+
+                googleAccountItems.forEach(item => {
+                    item.addEventListener('click', async () => {
+                        googleModal.classList.remove('active');
+                        // Tạo một Mock Google credential token
+                        const mockPayload = {
+                            email: item.getAttribute('data-email'),
+                            name: item.getAttribute('data-fullname')
+                        };
+                        const mockCredentialToken = "mock_jwt." + btoa(JSON.stringify(mockPayload)) + ".mock_sig";
+                        
+                        // Chạy qua hàm xử lý chính thức gọi backend
+                        await handleGoogleCredentialResponse({ credential: mockCredentialToken });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
