@@ -425,7 +425,10 @@
             </p>
 
             <div class="oauth-btn-list">
-                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger" style="margin-top: 10px; background-color: #ffffff; color: #202124; border-color: #dadce0;">
+                <!-- Nút Google chính thức (Chỉ render khi đã cấu hình Client ID thật) -->
+                <div id="google-official-btn-container" style="display: none; width: 100%; margin-top: 10px; margin-bottom: 2px;"></div>
+
+                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger" style="margin-top: 10px; background-color: #ffffff; color: #202124; border-color: #dadce0; width: 100%;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width:18px;">
                     Đăng nhập bằng Google
                 </button>
@@ -590,7 +593,6 @@
                 });
             }
 
-            // Xử lý Đăng nhập Google giả lập (Simulate fallback button)
             // Xử lý Đăng nhập Google giả lập
             const googleTrigger = document.getElementById('btn-google-trigger');
             const googleModal = document.getElementById('google-modal');
@@ -627,6 +629,48 @@
                     });
                 }
             }
+
+            // Tự động kiểm tra và chuyển đổi sang cổng Google Đăng Nhập chính thức nếu đã cấu hình Client ID
+            async function initGoogleLogin() {
+                try {
+                    const res = await fetch('/api/auth/google-client-id');
+                    const data = await res.json();
+                    
+                    if (data.clientId) {
+                        const triggerBtn = document.getElementById('btn-google-trigger');
+                        const officialContainer = document.getElementById('google-official-btn-container');
+                        
+                        if (triggerBtn && officialContainer) {
+                            triggerBtn.style.display = 'none';
+                            officialContainer.style.display = 'block';
+                            
+                            // Khởi tạo Google Identity Services
+                            google.accounts.id.initialize({
+                                client_id: data.clientId,
+                                callback: handleGoogleCredentialResponse
+                            });
+                            
+                            google.accounts.id.renderButton(
+                                officialContainer,
+                                { 
+                                    theme: "outline", 
+                                    size: "large", 
+                                    width: 320, 
+                                    text: "signin_with",
+                                    shape: "rectangular"
+                                }
+                            );
+                            
+                            // Hiển thị thêm popup One Tap ở lề trang
+                            google.accounts.id.prompt();
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Không thể tải Google Client ID cấu hình:', err);
+                }
+            }
+
+            initGoogleLogin();
         });
     </script>
 </body>

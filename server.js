@@ -58,6 +58,15 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // ==================== 1. API XÁC THỰC (AUTHENTICATION) ====================
 
+// Lấy Google Client ID để cấu hình động cho frontend
+app.get('/api/auth/google-client-id', (req, res) => {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (clientId && clientId !== 'YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com') {
+        return res.json({ clientId });
+    }
+    res.json({ clientId: null });
+});
+
 // Đăng nhập tài khoản thông thường
 app.post('/api/auth/login', async (req, res) => {
     try {
