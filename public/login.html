@@ -445,54 +445,27 @@
 
     <!-- Google Consent Screen Popup Simulator -->
     <div class="google-mock-modal" id="google-modal">
-        <div class="google-mock-card">
-            <div class="g-header">
-                <div class="g-logo">
-                    <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
+        <div class="google-mock-card" style="max-width: 380px; padding: 25px; border-radius: 8px;">
+            <div class="g-header" style="text-align: center; margin-bottom: 20px;">
+                <div class="g-logo" style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -1px; display: flex; justify-content: center; gap: 1px;">
+                    <span style="color: #4285F4;">G</span><span style="color: #EA4335;">o</span><span style="color: #FBBC05;">o</span><span style="color: #4285F4;">g</span><span style="color: #34A853;">l</span><span style="color: #EA4335;">e</span>
                 </div>
-                <h3 class="g-title">Đăng nhập bằng Google (Mock)</h3>
-                <p class="g-subtitle">để tiếp tục đến Thư viện Đà Nẵng</p>
+                <h3 class="g-title" style="font-size: 1.05rem; color: #202124; font-weight: 600;">Đăng nhập liên kết Google</h3>
+                <p class="g-subtitle" style="font-size: 0.8rem; color: #5f6368; margin-top: 4px;">Xác thực nhanh bằng bất kỳ tài khoản Google nào</p>
             </div>
             
-            <div class="g-accounts-list">
-                <!-- User Account 1 -->
-                <div class="g-account-item" data-username="reader1" data-fullname="Lê Hoàng Nam" data-email="hoangnam.le@gmail.com">
-                    <div class="g-avatar g-avatar-blue">N</div>
-                    <div class="g-acc-info">
-                        <span class="g-acc-name">Lê Hoàng Nam</span>
-                        <span class="g-acc-email">hoangnam.le@gmail.com</span>
-                    </div>
+            <form id="google-mock-form" style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="form-group" style="text-align: left; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="g-mock-email" style="font-size: 0.75rem; font-weight: 600; color: #5f6368; display: block;">Địa chỉ Email Google</label>
+                    <input type="email" id="g-mock-email" placeholder="Ví dụ: ban-doc@gmail.com" required class="form-input" style="border: 1px solid #dadce0; border-radius: 4px; padding: 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box;">
                 </div>
-
-                <!-- User Account 2 -->
-                <div class="g-account-item" data-username="reader2" data-fullname="Trần Thị Mỹ Linh" data-email="mylinh.tran99@gmail.com">
-                    <div class="g-avatar g-avatar-green">L</div>
-                    <div class="g-acc-info">
-                        <span class="g-acc-name">Trần Thị Mỹ Linh</span>
-                        <span class="g-acc-email">mylinh.tran99@gmail.com</span>
-                    </div>
+                <div class="form-group" style="text-align: left; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="g-mock-fullname" style="font-size: 0.75rem; font-weight: 600; color: #5f6368; display: block;">Họ và tên của bạn</label>
+                    <input type="text" id="g-mock-fullname" placeholder="Ví dụ: Nguyễn Văn A" required class="form-input" style="border: 1px solid #dadce0; border-radius: 4px; padding: 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box;">
                 </div>
-
-                <!-- Admin Account -->
-                <div class="g-account-item" data-username="admin" data-fullname="Nguyễn Văn Thủ Thư" data-email="admin@tvdn.gov.vn">
-                    <div class="g-avatar" style="background-color: #5f6368;">A</div>
-                    <div class="g-acc-info">
-                        <span class="g-acc-name">Nguyễn Văn Thủ Thư (Thủ thư)</span>
-                        <span class="g-acc-email">admin@tvdn.gov.vn</span>
-                    </div>
-                </div>
-
-                <div class="g-account-item" onclick="showToast('Vui lòng sử dụng một trong các tài khoản Google mẫu ở trên!', 'warning'); document.getElementById('google-modal').classList.remove('active');">
-                    <div class="g-avatar" style="background-color: #f1f3f4; color: #5f6368;"><i class="fa-solid fa-user-plus"></i></div>
-                    <div class="g-acc-info">
-                        <span class="g-acc-name" style="color: #1a73e8; font-weight: 500;">Sử dụng một tài khoản khác</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="g-footer">
-                Để tiếp tục, Google sẽ chia sẻ tên, địa chỉ email, tùy chọn ngôn ngữ và ảnh hồ sơ của bạn với Thư viện Đà Nẵng. <a href="#">Chính sách bảo mật</a>
-            </div>
+                <button type="submit" class="btn-page-submit" style="background-color: #1a73e8; color: white; padding: 10px; border-radius: 4px; border: none; font-weight: 600; cursor: pointer; margin-top: 10px; font-size: 0.85rem; width: 100%;">Tiếp tục đăng nhập</button>
+                <button type="button" id="btn-close-google-mock" style="background: none; border: none; color: #5f6368; font-size: 0.8rem; cursor: pointer; text-align: center; margin-top: 5px;">Hủy bỏ</button>
+            </form>
         </div>
     </div>
 
@@ -618,9 +591,11 @@
             }
 
             // Xử lý Đăng nhập Google giả lập (Simulate fallback button)
+            // Xử lý Đăng nhập Google giả lập
             const googleTrigger = document.getElementById('btn-google-trigger');
             const googleModal = document.getElementById('google-modal');
-            const googleAccountItems = document.querySelectorAll('.g-account-item');
+            const googleMockForm = document.getElementById('google-mock-form');
+            const btnCloseGoogleMock = document.getElementById('btn-close-google-mock');
 
             if (googleTrigger && googleModal) {
                 googleTrigger.addEventListener('click', () => {
@@ -633,20 +608,24 @@
                     }
                 });
 
-                // Lọc bỏ phần tử "Sử dụng tài khoản khác" để không kích hoạt login
-                googleAccountItems.forEach(item => {
-                    if (item.getAttribute('data-username')) {
-                        item.addEventListener('click', async () => {
-                            googleModal.classList.remove('active');
-                            const mockPayload = {
-                                email: item.getAttribute('data-email'),
-                                name: item.getAttribute('data-fullname')
-                            };
-                            const mockCredentialToken = "mock_jwt." + btoa(unescape(encodeURIComponent(JSON.stringify(mockPayload)))) + ".mock_sig";
-                            await handleGoogleCredentialResponse({ credential: mockCredentialToken });
-                        });
-                    }
-                });
+                if (btnCloseGoogleMock) {
+                    btnCloseGoogleMock.addEventListener('click', () => {
+                        googleModal.classList.remove('active');
+                    });
+                }
+
+                if (googleMockForm) {
+                    googleMockForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const email = document.getElementById('g-mock-email').value.trim();
+                        const fullname = document.getElementById('g-mock-fullname').value.trim();
+
+                        googleModal.classList.remove('active');
+                        const mockPayload = { email, name: fullname };
+                        const mockCredentialToken = "mock_jwt." + btoa(unescape(encodeURIComponent(JSON.stringify(mockPayload)))) + ".mock_sig";
+                        await handleGoogleCredentialResponse({ credential: mockCredentialToken });
+                    });
+                }
             }
         });
     </script>

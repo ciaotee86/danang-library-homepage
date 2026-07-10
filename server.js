@@ -215,10 +215,14 @@ app.post('/api/auth/google', async (req, res) => {
             const randomPassword = crypto.randomBytes(8).toString('hex');
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
             
-            await DB.query.run(
-                "INSERT INTO users (username, password, role, fullname, cardId, phone, status, borrowCount) VALUES (?, ?, 'reader', ?, ?, 'Google Account', 'active', 0)",
-                [username, hashedPassword, fullname, cardId]
-            );
+            try {
+                await DB.query.run(
+                    "INSERT INTO users (username, password, role, fullname, cardId, phone, status, borrowCount) VALUES (?, ?, 'reader', ?, ?, 'Google Account', 'active', 0)",
+                    [username, hashedPassword, fullname, cardId]
+                );
+            } catch (dbErr) {
+                console.warn(`-> Không thể lưu tài khoản Google mới vào database (có thể là trạng thái read-only):`, dbErr.message);
+            }
 
             user = { username, fullname, role: 'reader', cardId, phone: 'Google Account', status: 'active' };
         }
