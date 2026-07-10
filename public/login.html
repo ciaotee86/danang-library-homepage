@@ -446,31 +446,7 @@
         </div>
     </div>
 
-    <!-- Google Consent Screen Popup Simulator -->
-    <div class="google-mock-modal" id="google-modal">
-        <div class="google-mock-card" style="max-width: 380px; padding: 25px; border-radius: 8px;">
-            <div class="g-header" style="text-align: center; margin-bottom: 20px;">
-                <div class="g-logo" style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -1px; display: flex; justify-content: center; gap: 1px;">
-                    <span style="color: #4285F4;">G</span><span style="color: #EA4335;">o</span><span style="color: #FBBC05;">o</span><span style="color: #4285F4;">g</span><span style="color: #34A853;">l</span><span style="color: #EA4335;">e</span>
-                </div>
-                <h3 class="g-title" style="font-size: 1.05rem; color: #202124; font-weight: 600;">Đăng nhập liên kết Google</h3>
-                <p class="g-subtitle" style="font-size: 0.8rem; color: #5f6368; margin-top: 4px;">Xác thực nhanh bằng bất kỳ tài khoản Google nào</p>
-            </div>
-            
-            <form id="google-mock-form" style="display: flex; flex-direction: column; gap: 14px;">
-                <div class="form-group" style="text-align: left; display: flex; flex-direction: column; gap: 6px;">
-                    <label for="g-mock-email" style="font-size: 0.75rem; font-weight: 600; color: #5f6368; display: block;">Địa chỉ Email Google</label>
-                    <input type="email" id="g-mock-email" placeholder="Ví dụ: ban-doc@gmail.com" required class="form-input" style="border: 1px solid #dadce0; border-radius: 4px; padding: 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box;">
-                </div>
-                <div class="form-group" style="text-align: left; display: flex; flex-direction: column; gap: 6px;">
-                    <label for="g-mock-fullname" style="font-size: 0.75rem; font-weight: 600; color: #5f6368; display: block;">Họ và tên của bạn</label>
-                    <input type="text" id="g-mock-fullname" placeholder="Ví dụ: Nguyễn Văn A" required class="form-input" style="border: 1px solid #dadce0; border-radius: 4px; padding: 10px; font-size: 0.85rem; width: 100%; box-sizing: border-box;">
-                </div>
-                <button type="submit" class="btn-page-submit" style="background-color: #1a73e8; color: white; padding: 10px; border-radius: 4px; border: none; font-weight: 600; cursor: pointer; margin-top: 10px; font-size: 0.85rem; width: 100%;">Tiếp tục đăng nhập</button>
-                <button type="button" id="btn-close-google-mock" style="background: none; border: none; color: #5f6368; font-size: 0.8rem; cursor: pointer; text-align: center; margin-top: 5px;">Hủy bỏ</button>
-            </form>
-        </div>
-    </div>
+
 
     <!-- Notifications library -->
     <script src="notifications.js"></script>
@@ -593,42 +569,37 @@
                 });
             }
 
-            // Xử lý Đăng nhập Google giả lập
+            // Xử lý Đăng nhập Google giả lập mở bằng cửa sổ trình duyệt riêng (Popup)
             const googleTrigger = document.getElementById('btn-google-trigger');
-            const googleModal = document.getElementById('google-modal');
-            const googleMockForm = document.getElementById('google-mock-form');
-            const btnCloseGoogleMock = document.getElementById('btn-close-google-mock');
-
-            if (googleTrigger && googleModal) {
+            if (googleTrigger) {
                 googleTrigger.addEventListener('click', () => {
-                    googleModal.classList.add('active');
+                    const width = 500;
+                    const height = 600;
+                    const left = window.top.outerWidth / 2 + window.top.screenX - (width / 2);
+                    const top = window.top.outerHeight / 2 + window.top.screenY - (height / 2);
+                    
+                    window.open(
+                        'google-oauth-mock.html',
+                        'GoogleMockLoginWindow',
+                        `width=${width},height=${height},left=${left},top=${top},scrollbars=no,resizable=no`
+                    );
                 });
-
-                googleModal.addEventListener('click', (e) => {
-                    if (e.target === googleModal) {
-                        googleModal.classList.remove('active');
-                    }
-                });
-
-                if (btnCloseGoogleMock) {
-                    btnCloseGoogleMock.addEventListener('click', () => {
-                        googleModal.classList.remove('active');
-                    });
-                }
-
-                if (googleMockForm) {
-                    googleMockForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const email = document.getElementById('g-mock-email').value.trim();
-                        const fullname = document.getElementById('g-mock-fullname').value.trim();
-
-                        googleModal.classList.remove('active');
-                        const mockPayload = { email, name: fullname };
-                        const mockCredentialToken = "mock_jwt." + btoa(unescape(encodeURIComponent(JSON.stringify(mockPayload)))) + ".mock_sig";
-                        await handleGoogleCredentialResponse({ credential: mockCredentialToken });
-                    });
-                }
             }
+
+            // Lắng nghe dữ liệu phản hồi gửi về từ Cửa sổ Popup Giả lập Google
+            window.addEventListener('message', async (event) => {
+                // Chỉ nhận tin nhắn từ cùng nguồn trang (origin) để đảm bảo an toàn
+                if (event.origin !== window.location.origin) return;
+                
+                if (event.data && event.data.type === 'google-login-success') {
+                    const { email, name } = event.data;
+                    const mockPayload = { email, name };
+                    
+                    // Tạo mã token giả lập và gửi xác thực đến server
+                    const mockCredentialToken = "mock_jwt." + btoa(unescape(encodeURIComponent(JSON.stringify(mockPayload)))) + ".mock_sig";
+                    await handleGoogleCredentialResponse({ credential: mockCredentialToken });
+                }
+            });
 
             // Tự động kiểm tra và chuyển đổi sang cổng Google Đăng Nhập chính thức nếu đã cấu hình Client ID
             async function initGoogleLogin() {
