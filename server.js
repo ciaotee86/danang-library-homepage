@@ -75,7 +75,26 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'Sai tên đăng nhập, mã thẻ hoặc mật khẩu.' });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isHashed = user.password.startsWith('$2a$') || user.password.startsWith('$2b$') || user.password.startsWith('$2y$');
+        let isMatch = false;
+        if (isHashed) {
+            isMatch = await bcrypt.compare(password, user.password);
+        } else {
+            // Mật khẩu văn bản thô (chưa băm), dùng so sánh trực tiếp
+            isMatch = (password === user.password);
+            
+            // Cố gắng tự động băm và lưu vào DB nếu database cho phép ghi
+            if (isMatch) {
+                try {
+                    const hashedPassword = await bcrypt.hash(password, 10);
+                    await DB.query.run("UPDATE users SET password = ? WHERE username = ?", [hashedPassword, user.username]);
+                    console.log(`-> Tự động băm và lưu mật khẩu thành công cho người dùng: ${user.username}`);
+                } catch (dbErr) {
+                    console.warn(`-> Không thể cập nhật mật khẩu băm lên database (có thể là trạng thái read-only):`, dbErr.message);
+                }
+            }
+        }
+
         if (!isMatch) {
             return res.status(401).json({ success: false, message: 'Sai tên đăng nhập, mã thẻ hoặc mật khẩu.' });
         }
