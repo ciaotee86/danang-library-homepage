@@ -3,6 +3,26 @@
  * Kết nối REST API Backend, phân tích lịch sử đọc sách và thói quen mượn của tài khoản.
  */
 
+// Tự động đính kèm Token JWT vào tất cả các lượt fetch từ trang gợi ý AI
+const originalFetch = window.fetch;
+window.fetch = function(...args) {
+    let [url, options] = args;
+    const token = sessionStorage.getItem('tvdn_auth_token');
+    if (token) {
+        options = options || {};
+        options.headers = options.headers || {};
+        if (options.headers instanceof Headers) {
+            options.headers.set('Authorization', `Bearer ${token}`);
+        } else if (Array.isArray(options.headers)) {
+            options.headers.push(['Authorization', `Bearer ${token}`]);
+        } else {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        args[1] = options;
+    }
+    return originalFetch(...args);
+};
+
 let habitChart = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -31,10 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             document.getElementById('btn-logout').addEventListener('click', () => {
-                if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                showConfirm('Xác nhận đăng xuất', 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?', () => {
                     sessionStorage.removeItem('tvdn_logged_in_user');
+                    sessionStorage.removeItem('tvdn_auth_token');
                     window.location.href = 'index.html';
-                }
+                });
             });
         } else {
             // Chưa đăng nhập
@@ -281,7 +302,7 @@ window.borrowBookFromAI = async function(bookId, bookTitle) {
             const res = await fetch('/api/slips', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: user.username, bookId })
+                body: JSON.stringify({ bookId })
             });
             const data = await res.json();
             

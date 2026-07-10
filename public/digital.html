@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài liệu số & Ebooks - Thư viện Đà Nẵng</title>
-    <meta name="description" content="Đọc trực tuyến giáo trình số, tải tệp tin PDF tài liệu nghiên cứu học thuật của Thư viện Đà Nẵng.">
+    <title>Kho E-Book Số & Giáo Trình Trực Tuyến | Thư Viện Số Đà Nẵng</title>
+    <meta name="description" content="Đọc trực tuyến hàng ngàn giáo trình điện tử, tải tệp tin PDF tài liệu học tập và nghiên cứu khoa học nội sinh miễn phí tại Thư viện số Đà Nẵng.">
+    <meta name="keywords" content="ebook miễn phí, giáo trình điện tử, đọc sách online, tải tài liệu pdf, thư viện số đà nẵng, tài liệu nghiên cứu">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://danang-library-homepage.vercel.app/digital.html">
+    <meta property="og:type" content="object">
+    <meta property="og:title" content="Kho E-Book Số & Giáo Trình Trực Tuyến | Thư Viện Số Đà Nẵng">
+    <meta property="og:description" content="Đọc online giáo trình số, báo cáo khoa học, sách điện tử và tải PDF tài liệu học tập miễn phí.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -204,6 +210,7 @@
                 `;
                 document.getElementById('btn-logout').addEventListener('click', () => {
                     sessionStorage.removeItem('tvdn_logged_in_user');
+                    sessionStorage.removeItem('tvdn_auth_token');
                     window.location.reload();
                 });
             } else if (headerActions) {

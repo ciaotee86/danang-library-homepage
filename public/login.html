@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập Hệ thống Thư viện Đà Nẵng</title>
-    <meta name="description" content="Đăng nhập để mượn sách, tra cứu tài liệu học thuật và quản lý thẻ thư viện số Đà Nẵng.">
+    <title>Đăng Nhập Bạn Đọc & Thủ Thư | Thư Viện Số Đà Nẵng</title>
+    <meta name="description" content="Đăng nhập tài khoản bạn đọc hoặc thủ thư để mượn sách, tra cứu tài liệu học thuật và quản lý thẻ thư viện số Đà Nẵng.">
+    <meta name="keywords" content="đăng nhập thư viện, mở thẻ thư viện, đăng ký bạn đọc, thư viện số đà nẵng">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://danang-library-homepage.vercel.app/login.html">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -508,6 +511,7 @@
                 const data = await res.json();
                 if (data.success) {
                     sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                    sessionStorage.setItem('tvdn_auth_token', data.token);
                     showAlert('Đăng nhập thành công', `Xin chào bạn: ${data.user.fullname}`, 'success', () => {
                         if (data.user.role === 'admin') {
                             window.location.href = 'admin.html';
@@ -566,6 +570,7 @@
                         if (data.success) {
                             showAlert('Đăng ký thành công', `Đăng ký thẻ thư viện thành công!\nMã thẻ của bạn: ${data.user.cardId}\nTên đăng nhập: ${data.user.username}`, 'success', () => {
                                 sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                                sessionStorage.setItem('tvdn_auth_token', data.token);
                                 window.location.href = 'index.html';
                             });
                         } else {
@@ -595,6 +600,7 @@
                         
                         if (data.success) {
                             sessionStorage.setItem('tvdn_logged_in_user', JSON.stringify(data.user));
+                            sessionStorage.setItem('tvdn_auth_token', data.token);
                             showAlert('Đăng nhập thành công', `Xin chào bạn: ${data.user.fullname}`, 'success', () => {
                                 if (data.user.role === 'admin') {
                                     window.location.href = 'admin.html';

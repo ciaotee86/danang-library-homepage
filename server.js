@@ -8,9 +8,39 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 // Native fetch is used instead of axios to reduce dependencies
 const { OAuth2Client } = require('google-auth-library');
 const DB = require('./database');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'tvdn_secret_key_2026';
+
+// Middleware xác thực JWT Token từ Header
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Authorization: Bearer <TOKEN>
+    
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Yêu cầu xác thực token phiên đăng nhập.' });
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, decodedUser) => {
+        if (err) {
+            return res.status(403).json({ success: false, message: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.' });
+        }
+        req.user = decodedUser;
+        next();
+    });
+}
+
+// Middleware xác thực quyền Admin (Thủ thư)
+function requireAdmin(req, res, next) {
+    if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Quyền truy cập bị từ chối. Chỉ dành cho Thủ thư (Admin).' });
+    }
+    next();
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -37,11 +67,16 @@ app.post('/api/auth/login', async (req, res) => {
         }
 
         const user = await DB.query.get(
-            "SELECT * FROM users WHERE (username = ? OR cardId = ?) AND password = ?",
-            [username.trim().toLowerCase(), username.trim().toUpperCase(), password]
+            "SELECT * FROM users WHERE username = ? OR cardId = ?",
+            [username.trim().toLowerCase(), username.trim().toUpperCase()]
         );
 
         if (!user) {
+            return res.status(401).json({ success: false, message: 'Sai tên đăng nhập, mã thẻ hoặc mật khẩu.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
             return res.status(401).json({ success: false, message: 'Sai tên đăng nhập, mã thẻ hoặc mật khẩu.' });
         }
 
@@ -49,7 +84,17 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(403).json({ success: false, message: 'Tài khoản của bạn hiện đang bị khóa thẻ.' });
         }
 
-        res.json({ success: true, user: { username: user.username, fullname: user.fullname, role: user.role, cardId: user.cardId, phone: user.phone } });
+        const token = jwt.sign(
+            { username: user.username, role: user.role, fullname: user.fullname },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            success: true,
+            token,
+            user: { username: user.username, fullname: user.fullname, role: user.role, cardId: user.cardId, phone: user.phone }
+        });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -74,15 +119,24 @@ app.post('/api/auth/register', async (req, res) => {
 
         // Tạo mã thẻ bạn đọc ngẫu nhiên
         const cardId = 'TVDN-' + Math.floor(1000 + Math.random() * 9000);
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         await DB.query.run(
             "INSERT INTO users (username, password, role, fullname, cardId, phone, status, borrowCount) VALUES (?, ?, 'reader', ?, ?, ?, 'active', 0)",
-            [cleanUsername, password, fullname, cardId, phone]
+            [cleanUsername, hashedPassword, fullname, cardId, phone]
+        );
+
+        const token = jwt.sign(
+            { username: cleanUsername, role: 'reader', fullname },
+            JWT_SECRET,
+            { expiresIn: '24h' }
         );
 
         res.status(201).json({
             success: true,
             message: 'Đăng ký thẻ bạn đọc thành công!',
+            token,
             user: { username: cleanUsername, fullname, role: 'reader', cardId, phone }
         });
     } catch (err) {
@@ -140,10 +194,11 @@ app.post('/api/auth/google', async (req, res) => {
             // Đăng ký tự động tài khoản bạn đọc mới
             const cardId = 'TVDN-GG' + Math.floor(100 + Math.random() * 900);
             const randomPassword = crypto.randomBytes(8).toString('hex');
+            const hashedPassword = await bcrypt.hash(randomPassword, 10);
             
             await DB.query.run(
                 "INSERT INTO users (username, password, role, fullname, cardId, phone, status, borrowCount) VALUES (?, ?, 'reader', ?, ?, 'Google Account', 'active', 0)",
-                [username, randomPassword, fullname, cardId]
+                [username, hashedPassword, fullname, cardId]
             );
 
             user = { username, fullname, role: 'reader', cardId, phone: 'Google Account', status: 'active' };
@@ -153,8 +208,15 @@ app.post('/api/auth/google', async (req, res) => {
             return res.status(403).json({ success: false, message: 'Tài khoản liên kết Google này đang bị khóa thẻ.' });
         }
 
+        const token = jwt.sign(
+            { username: user.username, role: user.role, fullname: user.fullname },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
         res.json({
             success: true,
+            token,
             user: { username: user.username, fullname: user.fullname, role: user.role, cardId: user.cardId, phone: user.phone }
         });
 
@@ -178,7 +240,7 @@ app.get('/api/books', async (req, res) => {
 // ==================== 3. API QUẢN LÝ ĐỘC GIẢ (READERS) ====================
 
 // Lấy danh sách độc giả (role = 'reader')
-app.get('/api/readers', async (req, res) => {
+app.get('/api/readers', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const readers = await DB.query.all("SELECT username, fullname, cardId, phone, status, borrowCount FROM users WHERE role = 'reader'");
         res.json(readers);
@@ -188,7 +250,7 @@ app.get('/api/readers', async (req, res) => {
 });
 
 // Thêm mới độc giả
-app.post('/api/readers', async (req, res) => {
+app.post('/api/readers', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { username, password, fullname, phone, cardId } = req.body;
         if (!username || !password || !fullname || !phone || !cardId) {
@@ -200,9 +262,11 @@ app.post('/api/readers', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Tên đăng nhập đã tồn tại.' });
         }
 
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         await DB.query.run(
             "INSERT INTO users (username, password, role, fullname, cardId, phone, status, borrowCount) VALUES (?, ?, 'reader', ?, ?, ?, 'active', 0)",
-            [username.trim().toLowerCase(), password, fullname, cardId.trim().toUpperCase(), phone]
+            [username.trim().toLowerCase(), hashedPassword, fullname, cardId.trim().toUpperCase(), phone]
         );
 
         res.json({ success: true, message: 'Thêm độc giả mới thành công!' });
@@ -212,7 +276,7 @@ app.post('/api/readers', async (req, res) => {
 });
 
 // Cập nhật thông tin độc giả
-app.put('/api/readers/:username', async (req, res) => {
+app.put('/api/readers/:username', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { fullname, phone, cardId } = req.body;
         const username = req.params.username;
@@ -229,7 +293,7 @@ app.put('/api/readers/:username', async (req, res) => {
 });
 
 // Khóa / mở khóa độc giả
-app.patch('/api/readers/:username/toggle-lock', async (req, res) => {
+app.patch('/api/readers/:username/toggle-lock', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const username = req.params.username;
         const user = await DB.query.get("SELECT status FROM users WHERE username = ?", [username]);
@@ -248,7 +312,7 @@ app.patch('/api/readers/:username/toggle-lock', async (req, res) => {
 });
 
 // Xóa độc giả
-app.delete('/api/readers/:username', async (req, res) => {
+app.delete('/api/readers/:username', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const username = req.params.username;
         await DB.query.run("DELETE FROM users WHERE username = ?", [username]);
@@ -261,7 +325,7 @@ app.delete('/api/readers/:username', async (req, res) => {
 // ==================== 4. API QUẢN LÝ MƯỢN TRẢ SÁCH (SLIPS) ====================
 
 // Lấy danh sách phiếu mượn
-app.get('/api/slips', async (req, res) => {
+app.get('/api/slips', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const slips = await DB.query.all("SELECT * FROM borrow_slips ORDER BY borrowDate DESC");
         res.json(slips);
@@ -271,11 +335,12 @@ app.get('/api/slips', async (req, res) => {
 });
 
 // Đăng ký mượn sách mới
-app.post('/api/slips', async (req, res) => {
+app.post('/api/slips', authenticateToken, async (req, res) => {
     try {
-        const { username, bookId } = req.body;
-        if (!username || !bookId) {
-            return res.status(400).json({ success: false, message: 'Đầu vào thiếu tên độc giả hoặc mã sách.' });
+        const { bookId } = req.body;
+        const username = req.user.username; // Lấy trực tiếp từ Token đã ký của độc giả để chống giả mạo
+        if (!bookId) {
+            return res.status(400).json({ success: false, message: 'Đầu vào thiếu mã sách.' });
         }
 
         const user = await DB.query.get("SELECT * FROM users WHERE username = ?", [username]);
@@ -326,12 +391,17 @@ app.post('/api/slips', async (req, res) => {
 });
 
 // Trả sách
-app.post('/api/slips/:id/return', async (req, res) => {
+app.post('/api/slips/:id/return', authenticateToken, async (req, res) => {
     try {
         const slipId = req.params.id;
         const slip = await DB.query.get("SELECT * FROM borrow_slips WHERE id = ?", [slipId]);
         if (!slip) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu mượn.' });
+        }
+
+        // Độc giả chỉ được trả sách của chính mình, trừ khi là Thủ thư (Admin)
+        if (req.user.role !== 'admin' && slip.username !== req.user.username) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này cho tài khoản khác.' });
         }
 
         const todayStr = new Date().toISOString().split('T')[0];
@@ -381,12 +451,17 @@ app.post('/api/slips/:id/return', async (req, res) => {
 });
 
 // Gia hạn phiếu mượn
-app.post('/api/slips/:id/renew', async (req, res) => {
+app.post('/api/slips/:id/renew', authenticateToken, async (req, res) => {
     try {
         const slipId = req.params.id;
         const slip = await DB.query.get("SELECT * FROM borrow_slips WHERE id = ?", [slipId]);
         if (!slip) {
             return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu mượn.' });
+        }
+
+        // Độc giả chỉ được gia hạn sách của chính mình, trừ khi là Thủ thư (Admin)
+        if (req.user.role !== 'admin' && slip.username !== req.user.username) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này cho tài khoản khác.' });
         }
 
         const newDueDate = new Date(slip.dueDate);
@@ -418,7 +493,7 @@ app.get('/api/settings', async (req, res) => {
     }
 });
 
-app.post('/api/settings', async (req, res) => {
+app.post('/api/settings', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const settings = req.body;
         for (const [key, value] of Object.entries(settings)) {
@@ -442,7 +517,7 @@ app.get('/api/payment/vietqr-config', (req, res) => {
 });
 
 // Gọi cổng thanh toán MoMo thực tế để lấy Link/QR Code
-app.post('/api/payment/momo', async (req, res) => {
+app.post('/api/payment/momo', authenticateToken, async (req, res) => {
     try {
         const { slipId, amount } = req.body;
         if (!slipId || !amount) {
@@ -546,11 +621,21 @@ app.post('/api/payment/momo-ipn', async (req, res) => {
 });
 
 // Xác nhận thanh toán (Thủ công / Dành cho VietQR hoặc nút xác nhận mô phỏng)
-app.post('/api/payment/confirm', async (req, res) => {
+app.post('/api/payment/confirm', authenticateToken, async (req, res) => {
     try {
         const { slipId } = req.body;
         if (!slipId) {
             return res.status(400).json({ success: false, message: 'Thiếu mã phiếu mượn.' });
+        }
+
+        const slip = await DB.query.get("SELECT * FROM borrow_slips WHERE id = ?", [slipId]);
+        if (!slip) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy phiếu mượn.' });
+        }
+
+        // Độc giả chỉ được xác nhận hóa đơn của chính mình, trừ khi là Thủ thư (Admin)
+        if (req.user.role !== 'admin' && slip.username !== req.user.username) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này cho tài khoản khác.' });
         }
 
         await DB.query.run("UPDATE borrow_slips SET paymentStatus = 'paid' WHERE id = ?", [slipId]);
@@ -562,7 +647,7 @@ app.post('/api/payment/confirm', async (req, res) => {
 
 // ==================== 7. SAO LƯU & KHÔI PHỤC DATABASE ====================
 
-app.get('/api/backup', async (req, res) => {
+app.get('/api/backup', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const users = await DB.query.all("SELECT * FROM users");
         const books = await DB.query.all("SELECT * FROM books");
@@ -577,7 +662,7 @@ app.get('/api/backup', async (req, res) => {
     }
 });
 
-app.post('/api/restore', async (req, res) => {
+app.post('/api/restore', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { users, books, slips, settings, orders, orderItems } = req.body;
         if (!users || !books || !slips || !settings) {
@@ -630,10 +715,11 @@ app.post('/api/restore', async (req, res) => {
 // ==================== 8. API QUẢN LÝ ĐƠN HÀNG MUA SÁCH (ORDERS) ====================
 
 // 1. Đặt hàng mới (mua sách)
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', authenticateToken, async (req, res) => {
     try {
-        const { username, fullname, phone, address, items, paymentMethod } = req.body;
-        if (!username || !fullname || !phone || !address || !items || items.length === 0) {
+        const { fullname, phone, address, items, paymentMethod } = req.body;
+        const username = req.user.username; // Lấy trực tiếp từ Token đã được xác thực an toàn
+        if (!fullname || !phone || !address || !items || items.length === 0) {
             return res.status(400).json({ success: false, message: 'Đầu vào thiếu thông tin đặt hàng.' });
         }
 
@@ -680,7 +766,7 @@ app.post('/api/orders', async (req, res) => {
 });
 
 // 2. Lấy danh sách đơn hàng (Admin)
-app.get('/api/orders', async (req, res) => {
+app.get('/api/orders', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const orders = await DB.query.all("SELECT * FROM orders ORDER BY orderDate DESC");
         const items = await DB.query.all("SELECT * FROM order_items");
@@ -704,9 +790,14 @@ app.get('/api/orders', async (req, res) => {
 });
 
 // 3. Lấy danh sách đơn hàng của bạn đọc
-app.get('/api/orders/user/:username', async (req, res) => {
+app.get('/api/orders/user/:username', authenticateToken, async (req, res) => {
     try {
         const username = req.params.username;
+
+        // Độc giả chỉ được xem đơn hàng của chính mình, trừ khi là Thủ thư (Admin)
+        if (req.user.role !== 'admin' && req.user.username !== username) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền truy cập thông tin đơn hàng này.' });
+        }
         const orders = await DB.query.all("SELECT * FROM orders WHERE username = ? ORDER BY orderDate DESC", [username]);
         const items = await DB.query.all("SELECT * FROM order_items WHERE orderId IN (SELECT id FROM orders WHERE username = ?)", [username]);
 
@@ -727,12 +818,17 @@ app.get('/api/orders/user/:username', async (req, res) => {
 });
 
 // 4. Thanh toán đơn hàng (VietQR / MoMo simulation)
-app.post('/api/orders/:id/pay', async (req, res) => {
+app.post('/api/orders/:id/pay', authenticateToken, async (req, res) => {
     try {
         const orderId = req.params.id;
         const order = await DB.query.get("SELECT * FROM orders WHERE id = ?", [orderId]);
         if (!order) {
             return res.status(404).json({ success: false, message: 'Đơn hàng không tồn tại.' });
+        }
+
+        // Chỉ chủ đơn hàng mới được thanh toán đơn hàng này, trừ khi là Thủ thư (Admin)
+        if (req.user.role !== 'admin' && order.username !== req.user.username) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này cho đơn hàng của người khác.' });
         }
 
         await DB.query.run("UPDATE orders SET paymentStatus = 'paid', status = 'paid' WHERE id = ?", [orderId]);
@@ -743,7 +839,7 @@ app.post('/api/orders/:id/pay', async (req, res) => {
 });
 
 // 5. Cập nhật trạng thái đơn hàng (Admin)
-app.patch('/api/orders/:id/status', async (req, res) => {
+app.patch('/api/orders/:id/status', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const orderId = req.params.id;
         const { status } = req.body; // status: pending, paid, shipping, completed

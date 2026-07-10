@@ -5,6 +5,7 @@
 
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const bcrypt = require('bcryptjs');
 const dbPath = path.resolve(__dirname, 'library.db');
 
 // Kết nối tới file database SQLite
@@ -65,12 +66,25 @@ async function initializeDatabase() {
         // Seed users
         const userCount = await query.get("SELECT COUNT(*) as count FROM users");
         if (userCount.count === 0) {
-            await query.run("INSERT INTO users VALUES ('admin', 'admin123', 'admin', 'Nguyễn Văn Thủ Thư', 'TVDN-ADMIN', '0905123456', 'active', 0)");
-            await query.run("INSERT INTO users VALUES ('reader1', '123', 'reader', 'Lê Hoàng Nam', 'TVDN-0001', '0935987654', 'active', 2)");
-            await query.run("INSERT INTO users VALUES ('reader2', '123', 'reader', 'Trần Thị Mỹ Linh', 'TVDN-0002', '0914112233', 'active', 1)");
-            await query.run("INSERT INTO users VALUES ('reader3', '123', 'reader', 'Phạm Minh Hải', 'TVDN-0003', '0988445566', 'locked', 0)");
-            await query.run("INSERT INTO users VALUES ('reader4', '123', 'reader', 'Hoàng Anh Tuấn', 'TVDN-0004', '0977123987', 'active', 0)");
+            const hashedAdmin = await bcrypt.hash('admin123', 10);
+            const hashedReader = await bcrypt.hash('123', 10);
+            await query.run("INSERT INTO users VALUES ('admin', ?, 'admin', 'Nguyễn Văn Thủ Thư', 'TVDN-ADMIN', '0905123456', 'active', 0)", [hashedAdmin]);
+            await query.run("INSERT INTO users VALUES ('reader1', ?, 'reader', 'Lê Hoàng Nam', 'TVDN-0001', '0935987654', 'active', 2)", [hashedReader]);
+            await query.run("INSERT INTO users VALUES ('reader2', ?, 'reader', 'Trần Thị Mỹ Linh', 'TVDN-0002', '0914112233', 'active', 1)", [hashedReader]);
+            await query.run("INSERT INTO users VALUES ('reader3', ?, 'reader', 'Phạm Minh Hải', 'TVDN-0003', '0988445566', 'locked', 0)", [hashedReader]);
+            await query.run("INSERT INTO users VALUES ('reader4', ?, 'reader', 'Hoàng Anh Tuấn', 'TVDN-0004', '0977123987', 'active', 0)", [hashedReader]);
             console.log('-> Đã chèn dữ liệu mẫu bảng users.');
+        }
+
+        // Migration: Băm mật khẩu cho các tài khoản hiện có nếu chưa băm
+        const existingUsersList = await query.all("SELECT username, password FROM users");
+        for (const u of existingUsersList) {
+            const isHashed = u.password.startsWith('$2a$') || u.password.startsWith('$2b$');
+            if (!isHashed) {
+                const hashedPassword = await bcrypt.hash(u.password, 10);
+                await query.run("UPDATE users SET password = ? WHERE username = ?", [hashedPassword, u.username]);
+                console.log(`-> Đã di trú băm mật khẩu cho tài khoản: ${u.username}`);
+            }
         }
 
         // 2. Tạo bảng Books

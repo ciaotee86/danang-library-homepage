@@ -9,7 +9,10 @@ let activeFineAmountForPayment = 0;
 document.addEventListener('DOMContentLoaded', () => {
     // === 1. Xác thực (Authentication Check) ===
     const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
-    if (!loggedUser) {
+    const token = sessionStorage.getItem('tvdn_auth_token');
+    if (!loggedUser || !token) {
+        sessionStorage.removeItem('tvdn_logged_in_user');
+        sessionStorage.removeItem('tvdn_auth_token');
         window.location.href = 'login.html';
         return;
     }
@@ -75,7 +78,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadUserSlips(user) {
     try {
-        const res = await fetch('/api/slips');
+        const token = sessionStorage.getItem('tvdn_auth_token');
+        const res = await fetch('/api/slips', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         const slips = await res.json();
 
         // Lọc phiếu của user
@@ -155,7 +161,10 @@ window.selectUserSlipRow = async function(slipId) {
     if (!detailPanel) return;
 
     try {
-        const res = await fetch('/api/slips');
+        const token = sessionStorage.getItem('tvdn_auth_token');
+        const res = await fetch('/api/slips', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         const slips = await res.json();
         const slip = slips.find(s => s.id === slipId);
 
@@ -208,7 +217,11 @@ window.selectUserSlipRow = async function(slipId) {
 window.returnUserBook = async function(slipId) {
     showConfirm('Xác nhận trả sách', 'Bạn có chắc chắn muốn hoàn trả cuốn sách này về thư viện?', async () => {
         try {
-            const res = await fetch(`/api/slips/${slipId}/return`, { method: 'POST' });
+            const token = sessionStorage.getItem('tvdn_auth_token');
+            const res = await fetch(`/api/slips/${slipId}/return`, { 
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             const data = await res.json();
 
             if (data.success) {
@@ -232,7 +245,11 @@ window.returnUserBook = async function(slipId) {
 // Gia hạn trực tuyến
 window.renewUserSlip = async function(slipId) {
     try {
-        const res = await fetch(`/api/slips/${slipId}/renew`, { method: 'POST' });
+        const token = sessionStorage.getItem('tvdn_auth_token');
+        const res = await fetch(`/api/slips/${slipId}/renew`, { 
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await res.json();
 
         if (data.success) {
@@ -310,9 +327,13 @@ window.selectPaymentMethod = async function(method) {
         payInstructions.innerHTML = 'Đang gọi API cổng thanh toán MoMo...';
         
         try {
+            const token = sessionStorage.getItem('tvdn_auth_token');
             const res = await fetch('/api/payment/momo', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ slipId: activeSlipIdForPayment, amount: activeFineAmountForPayment })
             });
             const data = await res.json();
@@ -336,9 +357,11 @@ window.selectPaymentMethod = async function(method) {
 window.confirmPaymentSimulate = async function() {
     try {
         const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
+        const token = sessionStorage.getItem('tvdn_auth_token');
         if (paymentType === 'order') {
             const res = await fetch(`/api/orders/${activeSlipIdForPayment}/pay`, {
-                method: 'POST'
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
             if (data.success) {
@@ -349,7 +372,10 @@ window.confirmPaymentSimulate = async function() {
         } else {
             const res = await fetch('/api/payment/confirm', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({ slipId: activeSlipIdForPayment })
             });
             const data = await res.json();
@@ -371,7 +397,10 @@ async function loadUserOrders(user) {
     if (!tableBody) return;
 
     try {
-        const res = await fetch(`/api/orders/user/${user.username}`);
+        const token = sessionStorage.getItem('tvdn_auth_token');
+        const res = await fetch(`/api/orders/user/${user.username}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         const orders = await res.json();
 
         tableBody.innerHTML = '';

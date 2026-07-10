@@ -3,6 +3,26 @@
  * Kết nối REST API Backend, quản trị độc giả, duyệt mượn trả, vẽ biểu đồ và cổng thanh toán.
  */
 
+// Tự động đính kèm Token JWT vào tất cả các lượt fetch gọi từ trang Admin
+const originalFetch = window.fetch;
+window.fetch = function(...args) {
+    let [url, options] = args;
+    const token = sessionStorage.getItem('tvdn_auth_token');
+    if (token) {
+        options = options || {};
+        options.headers = options.headers || {};
+        if (options.headers instanceof Headers) {
+            options.headers.set('Authorization', `Bearer ${token}`);
+        } else if (Array.isArray(options.headers)) {
+            options.headers.push(['Authorization', `Bearer ${token}`]);
+        } else {
+            options.headers['Authorization'] = `Bearer ${token}`;
+        }
+        args[1] = options;
+    }
+    return originalFetch(...args);
+};
+
 let borrowsByDayChart = null;
 let borrowsByCategoryChart = null;
 let activeSlipIdForPayment = null;
@@ -13,7 +33,10 @@ let currentBorrowTab = 'borrowing'; // borrowing, history
 document.addEventListener('DOMContentLoaded', () => {
     // === 1. Kiểm tra xác thực (Authentication Check) ===
     const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
-    if (!loggedUser || loggedUser.role !== 'admin') {
+    const token = sessionStorage.getItem('tvdn_auth_token');
+    if (!loggedUser || loggedUser.role !== 'admin' || !token) {
+        sessionStorage.removeItem('tvdn_logged_in_user');
+        sessionStorage.removeItem('tvdn_auth_token');
         showAlert('Từ chối truy cập', 'Bạn không có quyền truy cập trang quản trị. Vui lòng đăng nhập tài khoản thủ thư!', 'error', () => {
             window.location.href = 'login.html';
         });

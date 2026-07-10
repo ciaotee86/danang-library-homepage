@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('btn-logout').addEventListener('click', () => {
                 showConfirm('Xác nhận đăng xuất', 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?', () => {
                     sessionStorage.removeItem('tvdn_logged_in_user');
+                    sessionStorage.removeItem('tvdn_auth_token');
                     window.location.reload();
                 });
             });
@@ -194,10 +195,14 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmBtn.onclick = async () => {
                 closeBorrowModal();
                 try {
+                    const token = sessionStorage.getItem('tvdn_auth_token');
                     const res = await fetch('/api/slips', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: user.username, bookId })
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ bookId })
                     });
                     
                     const data = await res.json();
@@ -678,11 +683,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const paymentMethod = document.querySelector('input[name="cart-pay-method"]:checked').value;
 
         try {
+            const token = sessionStorage.getItem('tvdn_auth_token');
             const res = await fetch('/api/orders', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
-                    username: user.username,
                     fullname,
                     phone,
                     address,
