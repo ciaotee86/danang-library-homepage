@@ -120,8 +120,27 @@
                 <div class="shape shape-2"></div>
             </div>
             <div class="hero-content">
-                <h1 class="hero-title">HỆ THỐNG THƯ VIỆN SỐ THÔNG MINH</h1>
-                <p class="hero-subtitle">Tra cứu hàng triệu đầu sách văn học, khoa học, lịch sử và tài liệu nghiên cứu học tập.</p>
+                <div class="hero-eyebrow">
+                    <i class="fa-solid fa-star"></i> Thư Viện Số Tổng Hợp Đà Nẵng
+                </div>
+                <h1 class="hero-title">Kết nối tri thức, <span>khám phá thế giới</span></h1>
+                <p class="hero-subtitle">Tra cứu hàng trăm nghìn đầu sách văn học, khoa học, lịch sử và tài liệu nghiên cứu học tập mọi lúc, mọi nơi.</p>
+
+                <!-- Quick Stats -->
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-val" data-counter="120000" data-suffix="+">120,000+</span>
+                        <span class="hero-stat-lbl">Đầu sách</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-val" data-counter="48000" data-suffix="+">48,000+</span>
+                        <span class="hero-stat-lbl">Bạn đọc</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-val" data-counter="5200" data-suffix="+">5,200+</span>
+                        <span class="hero-stat-lbl">E-Book miễn phí</span>
+                    </div>
+                </div>
                 
                 <!-- Search Bar Card -->
                 <div class="search-card">
@@ -151,6 +170,38 @@
                 </div>
             </div>
         </section>
+
+        <!-- Quick Actions Bar — 1-tap shortcuts -->
+        <div class="quick-actions-bar" data-animate>
+            <a href="search.html" class="quick-action-btn" data-delay="100">
+                <div class="qa-icon qa-icon-borrow"><i class="fa-solid fa-book-open-reader"></i></div>
+                <div class="qa-text">
+                    <span class="qa-label">Mượn sách ngay</span>
+                    <span class="qa-sub">Đăng ký chỉ 1 bước</span>
+                </div>
+            </a>
+            <a href="search.html" class="quick-action-btn" data-delay="200">
+                <div class="qa-icon qa-icon-search"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="qa-text">
+                    <span class="qa-label">Tra cứu tài liệu</span>
+                    <span class="qa-sub">100,000+ đầu sách</span>
+                </div>
+            </a>
+            <a href="digital.html" class="quick-action-btn" data-delay="300">
+                <div class="qa-icon qa-icon-ebook"><i class="fa-solid fa-tablet-screen-button"></i></div>
+                <div class="qa-text">
+                    <span class="qa-label">Đọc E-Book</span>
+                    <span class="qa-sub">Miễn phí — online</span>
+                </div>
+            </a>
+            <a href="ai-suggest.html" class="quick-action-btn" data-delay="400">
+                <div class="qa-icon qa-icon-ai"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div class="qa-text">
+                    <span class="qa-label">Gợi ý AI</span>
+                    <span class="qa-sub">Cá nhân hóa cho bạn</span>
+                </div>
+            </a>
+        </div>
 
         <!-- Three Column Grid Layout -->
         <div class="layout-grid-container">
@@ -876,6 +927,8 @@
 
     <!-- Notifications library -->
     <script src="notifications.js"></script>
+    <!-- Animations -->
+    <script src="animations.js"></script>
     <!-- Main JavaScript -->
     <script src="script.js"></script>
 </body>

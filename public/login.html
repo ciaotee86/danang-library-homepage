@@ -20,50 +20,89 @@
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
-            background-color: var(--primary-dark);
-            height: 100vh;
+            background: linear-gradient(145deg, #F7F5F2 0%, #EDE9E3 100%);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .login-page-container {
-            background-color: var(--bg-card);
+            background: var(--bg-card);
             width: 100%;
-            max-width: 960px;
-            height: 600px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
+            max-width: 980px;
+            border-radius: var(--r-xl);
+            box-shadow: var(--shadow-xl);
             overflow: hidden;
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            grid-template-columns: 1fr 1fr;
+            border: 1px solid var(--border);
+            animation: scaleIn 0.45s var(--ease-spring) both;
         }
 
-        /* Left Panel - Forms */
+        /* Left Panel — Form */
         .login-panel-left {
-            padding: 50px;
+            padding: 52px 48px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             position: relative;
+            background: var(--bg-card);
         }
 
         .logo-back-to-home {
             position: absolute;
-            top: 30px;
-            left: 50px;
+            top: 28px; left: 36px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
+            gap: 7px;
+            font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: var(--r-full);
+            border: 1px solid var(--border);
+            transition: all var(--t-fast) var(--ease);
         }
 
         .logo-back-to-home:hover {
-            color: var(--secondary-color);
+            color: var(--brand);
+            border-color: var(--brand-light);
+            background: var(--bg-warm);
+        }
+
+        .login-logo-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .login-logo-img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .login-logo-txt {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-logo-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--brand);
+        }
+
+        .login-logo-sub {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         .form-title-area {
@@ -71,129 +110,176 @@
         }
 
         .form-title-area h2 {
-            font-size: 1.6rem;
-            color: var(--primary-color);
+            font-size: 1.65rem;
+            color: var(--brand);
             margin-bottom: 6px;
+            font-weight: 800;
         }
 
         .form-title-area p {
-            font-size: 0.85rem;
+            font-size: 0.83rem;
             color: var(--text-muted);
         }
 
         .login-page-form {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
         .form-tab-toggle {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-            font-size: 0.85rem;
+            margin-top: 14px;
+            font-size: 0.83rem;
             color: var(--text-muted);
+            text-align: center;
         }
 
         .form-tab-toggle a {
             font-weight: 700;
-            color: var(--accent-dark);
+            color: var(--accent);
         }
 
-        .btn-page-submit {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-            color: var(--white);
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(30, 107, 123, 0.2);
+        .form-tab-toggle a:hover {
+            color: var(--accent-hover);
         }
 
-        .btn-page-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(30, 107, 123, 0.3);
-        }
-
-        /* Right Panel - OAuth Mockups */
+        /* Right Panel — OAuth */
         .login-panel-right {
-            background: linear-gradient(135deg, #07192b 0%, #112e51 100%);
-            padding: 50px;
+            background: linear-gradient(145deg, #0D1B35 0%, #1A2B4A 60%, #1B4F6E 100%);
+            padding: 52px 44px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            border-left: 1px solid var(--border-color);
+            color: rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-panel-right::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -80px;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(43, 69, 144, 0.4) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .login-panel-right::after {
+            content: '';
+            position: absolute;
+            bottom: -120px; left: -60px;
+            width: 360px; height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(27, 122, 140, 0.3) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .oauth-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: var(--r-full);
+            padding: 5px 14px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
         }
 
         .oauth-heading {
-            color: var(--white);
-            font-size: 1.15rem;
-            margin-bottom: 24px;
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
             position: relative;
+            z-index: 1;
+        }
+
+        .oauth-subtitle {
+            font-size: 0.8rem;
+            line-height: 1.55;
+            margin-bottom: 28px;
+            color: rgba(255,255,255,0.65);
+            position: relative;
+            z-index: 1;
         }
 
         .oauth-btn-list {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
             width: 100%;
-            max-width: 280px;
-            align-items: center;
+            max-width: 290px;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-oauth {
-            background-color: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: var(--white);
-            padding: 12px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.85rem;
+            background: rgba(255,255,255,0.1);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: var(--r-sm);
+            font-weight: 700;
+            font-size: 0.875rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            transition: var(--transition-smooth);
+            transition: all var(--t-base) var(--ease);
             width: 100%;
         }
 
         .btn-oauth:hover {
-            background-color: var(--white);
-            color: var(--primary-dark);
-            border-color: var(--white);
+            background: rgba(255,255,255,0.95);
+            color: var(--brand);
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-google-oauth {
+            background: #fff;
+            color: #202124;
+            border-color: #DADCE0;
         }
 
         .btn-google-oauth:hover {
-            box-shadow: 0 4px 15px rgba(219, 68, 55, 0.25);
+            background: #F8F9FA;
+            color: #111;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
         .lib-info-badge {
-            margin-top: 50px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-            line-height: 1.4;
+            margin-top: 36px;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Google Login Modal Mockup */
+        /* Google mock modal */
         .google-mock-modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 10000;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(10px);
+            z-index: 20000;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
             pointer-events: none;
-            transition: var(--transition-smooth);
+            transition: opacity var(--t-base) var(--ease);
         }
 
         .google-mock-modal.active {
@@ -202,32 +288,28 @@
         }
 
         .google-mock-card {
-            background-color: var(--white);
-            width: 380px;
-            border-radius: 8px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-            padding: 24px;
-            font-family: 'Roboto', 'Inter', sans-serif;
-            color: #202124;
+            background: #fff;
+            width: 390px;
+            max-width: calc(100vw - 32px);
+            border-radius: var(--r-lg);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            padding: 32px;
             text-align: left;
-            transform: scale(0.95);
-            transition: var(--transition-smooth);
+            transform: scale(0.94) translateY(-12px);
+            transition: all var(--t-base) var(--ease-spring);
         }
 
         .google-mock-modal.active .google-mock-card {
-            transform: scale(1);
+            transform: none;
         }
 
-        .g-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+        .g-header { text-align: center; margin-bottom: 20px; }
 
         .g-logo {
-            font-family: 'Product Sans', 'Inter', sans-serif;
-            font-size: 1.5rem;
+            font-family: 'Product Sans', 'Montserrat', sans-serif;
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .g-logo span:nth-child(1) { color: #4285F4; }
@@ -238,108 +320,35 @@
         .g-logo span:nth-child(6) { color: #EA4335; }
 
         .g-title {
-            font-size: 1.1rem;
-            font-weight: 500;
+            font-size: 1.05rem;
+            font-weight: 600;
             color: #202124;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
-        .g-subtitle {
-            font-size: 0.85rem;
-            color: #5f6368;
-        }
-
-        .g-accounts-list {
-            margin-top: 15px;
-            border-top: 1px solid #dadce0;
-            border-bottom: 1px solid #dadce0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .g-account-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f3f4;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .g-account-item:last-child {
-            border-bottom: none;
-        }
-
-        .g-account-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .g-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--secondary-color);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .g-avatar-blue { background-color: #4285f4; }
-        .g-avatar-green { background-color: #34a853; }
-
-        .g-acc-info {
-            display: flex;
-            flex-direction: column;
-            font-size: 0.85rem;
-        }
-
-        .g-acc-name {
-            font-weight: 600;
-            color: #3c4043;
-        }
-
-        .g-acc-email {
-            color: #5f6368;
-            font-size: 0.75rem;
-        }
+        .g-subtitle { font-size: 0.83rem; color: #5F6368; }
 
         .g-footer {
             margin-top: 16px;
-            font-size: 0.75rem;
-            color: #5f6368;
-            line-height: 1.4;
+            font-size: 0.73rem;
+            color: #5F6368;
+            line-height: 1.45;
             text-align: center;
         }
 
-        .g-footer a {
-            color: #1a73e8;
-        }
+        .g-footer a { color: #1A73E8; }
 
-        @media (max-width: 768px) {
+        @media (max-width: 760px) {
             .login-page-container {
                 grid-template-columns: 1fr;
-                height: auto;
-                max-width: 450px;
+                max-width: 440px;
             }
 
-            .login-panel-right {
-                padding: 40px;
-                border-left: none;
-                border-top: 1px solid var(--border-color);
-            }
+            .login-panel-right { padding: 40px 32px; }
+            .login-panel-left { padding: 60px 32px 40px; }
 
-            .login-panel-left {
-                padding: 40px;
-            }
-
-            .logo-back-to-home {
-                position: static;
-                margin-bottom: 30px;
-            }
+            .login-panel-right::before,
+            .login-panel-right::after { display: none; }
         }
     </style>
 </head>
@@ -351,13 +360,22 @@
         <!-- Left Panel: Forms (Normal Email / Card ID) -->
         <div class="login-panel-left">
             <a href="index.html" class="logo-back-to-home">
-                <i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ
+                <i class="fa-solid fa-arrow-left"></i> Trang chủ
             </a>
+
+            <!-- Logo row -->
+            <div class="login-logo-row">
+                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="login-logo-img">
+                <div class="login-logo-txt">
+                    <span class="login-logo-name">THƯ VIỆN ĐÀ NẴNG</span>
+                    <span class="login-logo-sub">Kết nối tri thức · Phát triển cộng đồng</span>
+                </div>
+            </div>
 
             <!-- LOGIN VIEW -->
             <div id="login-view">
                 <div class="form-title-area">
-                    <h2>Đăng nhập Bạn đọc / Thủ thư</h2>
+                    <h2>Chào mừng trở lại</h2>
                     <p>Nhập thông tin thẻ thư viện số của bạn</p>
                 </div>
 
@@ -387,7 +405,7 @@
             <!-- REGISTER VIEW (Hidden by default) -->
             <div id="register-view" style="display: none;">
                 <div class="form-title-area">
-                    <h2>Đăng ký Thẻ Bạn đọc Mới</h2>
+                    <h2>Đăng ký Thẻ Bạn đọc</h2>
                     <p>Tạo tài khoản học tập trực tuyến ngay lập tức</p>
                 </div>
 
@@ -419,21 +437,22 @@
 
         <!-- Right Panel: Google & Microsoft OAuth logins -->
         <div class="login-panel-right">
-            <h3 class="oauth-heading">Cổng Xác Thực Liên Kết</h3>
-            <p style="font-size: 0.8rem; line-height: 1.5; margin-bottom: 30px; color: rgba(255,255,255,0.7);">
-                Sử dụng tài khoản học tập/văn phòng liên kết để đăng nhập nhanh chóng mà không cần đăng ký.
+            <div class="oauth-eyebrow"><i class="fa-solid fa-shield-halved"></i> Cổng Xác Thực An Toàn</div>
+            <h3 class="oauth-heading">Đăng nhập nhanh</h3>
+            <p class="oauth-subtitle">
+                Sử dụng tài khoản học tập hoặc văn phòng để đăng nhập an toàn, không cần ghi nhớ thêm mật khẩu.
             </p>
 
             <div class="oauth-btn-list">
                 <!-- Nút Google chính thức (Chỉ render khi đã cấu hình Client ID thật) -->
-                <div id="google-official-btn-container" style="display: none; width: 100%; margin-top: 10px; margin-bottom: 2px;"></div>
+                <div id="google-official-btn-container" style="display: none; width: 100%; margin-bottom: 2px;"></div>
 
-                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger" style="margin-top: 10px; background-color: #ffffff; color: #202124; border-color: #dadce0; width: 100%;">
+                <button class="btn-oauth btn-google-oauth" id="btn-google-trigger">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width:18px;">
                     Đăng nhập bằng Google
                 </button>
 
-                <button class="btn-oauth" onclick="showAlert('Thông báo hệ thống', 'Cổng đăng nhập Microsoft đang bảo trì, vui lòng sử dụng phương thức đăng nhập bằng Google hoặc mã thẻ!', 'warning')" style="margin-top: 12px;">
+                <button class="btn-oauth" onclick="showAlert('Thông báo hệ thống', 'Cổng đăng nhập Microsoft đang bảo trì, vui lòng sử dụng phương thức đăng nhập bằng Google hoặc mã thẻ!', 'warning')">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" style="width:18px;">
                     Đăng nhập bằng Microsoft
                 </button>
@@ -644,5 +663,6 @@
             initGoogleLogin();
         });
     </script>
+    <script src="animations.js"></script>
 </body>
 </html>
