@@ -95,38 +95,61 @@
     </style>
 </head>
 <body>
-
-    <!-- Header / Navigation -->
-    <header class="app-header">
-        <div class="header-container">
-            <div class="logo-area" onclick="window.location.href='index.html'" style="cursor: pointer;">
-                <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img" id="lib-logo">
-                <div class="logo-text">
-                    <span class="logo-title">THƯ VIỆN ĐÀ NẴNG</span>
-                    <span class="logo-slogan">KẾT NỐI TRI THỨC - PHÁT TRIỂN CỘNG ĐỒNG</span>
-                </div>
-            </div>
-            
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="index.html">Trang chủ</a></li>
-                    <li><a href="search.html" class="active">Tra cứu</a></li>
-                    <li><a href="digital.html">Tài liệu số</a></li>
-                    <li><a href="events.html">Sự kiện</a></li>
-                    <li><a href="contact.html">Liên hệ</a></li>
-                </ul>
-            </nav>
-
-            <div class="header-actions">
-                <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
-                </button>
-                <button class="btn-login" id="btn-login-trigger">
-                    <i class="fa-solid fa-user-tie"></i> Đăng nhập
-                </button>
-            </div>
+<div class="app-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <img src="assets/logo.png" alt="Logo" class="sidebar-logo-img">
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-name">THƯ VIỆN ĐÀ NẴNG</span>
+        <span class="sidebar-logo-sub">Kết nối tri thức · Phát triển cộng đồng</span>
+      </div>
+    </a>
+    <div class="sidebar-section-label">Điều hướng</div>
+    <nav class="sidebar-nav">
+      <a href="index.html"><div class="nav-icon"><i class="fa-solid fa-house"></i></div> Trang chủ</a>
+      <a href="search.html" class="active"><div class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></div> Tra cứu sách</a>
+      <a href="digital.html"><div class="nav-icon"><i class="fa-solid fa-tablet-screen-button"></i></div> Tài liệu số <span class="nav-badge">Mới</span></a>
+      <a href="events.html"><div class="nav-icon"><i class="fa-regular fa-calendar-days"></i></div> Sự kiện</a>
+      <a href="contact.html"><div class="nav-icon"><i class="fa-regular fa-envelope"></i></div> Liên hệ</a>
+      <a href="profile.html"><div class="nav-icon"><i class="fa-regular fa-user"></i></div> Tài khoản</a>
+    </nav>
+    <div class="sidebar-section-label">Công cụ</div>
+    <a href="ai-suggest.html" class="sidebar-ai-btn"><i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý sách bằng AI</a>
+    <div class="sidebar-hours">
+      <div class="sidebar-hours-title"><i class="fa-regular fa-clock"></i> Giờ mở cửa</div>
+      <div class="sidebar-hours-row"><span>Thứ 2 – Thứ 6</span><span>7:30 – 21:00</span></div>
+      <div class="sidebar-hours-row"><span>Thứ 7 – CN</span><span>7:30 – 17:00</span></div>
+    </div>
+    <div class="sidebar-user">
+      <button class="sidebar-user-btn" id="sidebar-user-btn" onclick="openLoginModal ? openLoginModal() : window.location.href='login.html'">
+        <div class="sidebar-user-avatar"><i class="fa-regular fa-user"></i></div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name" id="sidebar-user-name">Đăng nhập</span>
+          <span class="sidebar-user-role" id="sidebar-user-role">Bạn chưa đăng nhập</span>
         </div>
+        <i class="fa-solid fa-chevron-right" style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-left:auto;"></i>
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="document.getElementById('sidebar').classList.remove('open');this.classList.remove('open');"></div>
+
+  <!-- MAIN CONTENT AREA -->
+  <div class="main-content-area">
+    <header class="topbar" id="topbar">
+      <button class="topbar-menu-btn" onclick="document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="topbar-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="topbar-search-input" placeholder="Tìm sách, tác giả, chủ đề...">
+        <button class="topbar-search-btn" onclick="const q=document.getElementById('topbar-search-input').value.trim();if(q)window.location.href='search.html?q='+encodeURIComponent(q);">Tìm</button>
+      </div>
+      <div class="topbar-actions">
+        <a href="login.html" class="topbar-login-btn"><i class="fa-regular fa-circle-user"></i> Đăng nhập</a>
+      </div>
     </header>
+    <div class="content-inner">
 
     <!-- Main Content -->
     <main class="app-main">
@@ -195,21 +218,9 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <div class="logo-area-footer">
-                    <img src="assets/logo.png" alt="Logo Thư viện Đà Nẵng" class="logo-img-footer">
-                    <span class="footer-title">Thư viện Đà Nẵng</span>
-                </div>
-                <p class="footer-desc">Hệ thống thư viện hiện đại hàng đầu khu vực miền Trung, kết nối cộng đồng bạn đọc và hỗ trợ học tập suốt đời.</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Thư viện Tổng hợp Đà Nẵng. Bản quyền được bảo lưu.</p>
-        </div>
-    </footer>
+    </div><!-- /.content-inner -->
+  </div><!-- /.main-content-area -->
+</div><!-- /.app-layout -->
 
     <!-- Script block -->
     <script src="notifications.js"></script>
