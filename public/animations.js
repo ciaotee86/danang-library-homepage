@@ -39,6 +39,9 @@
         window.addEventListener('load', () => {
             document.body.style.opacity = '1';
         });
+        window.addEventListener('pageshow', (event) => {
+            document.body.style.opacity = '1';
+        });
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a[href]');
             if (!link) return;
