@@ -17,50 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Hiển thị Header
-    const headerActions = document.querySelector('.header-actions');
-    if (headerActions) {
-        const adminButton = loggedUser.role === 'admin' 
-            ? `<button class="btn-login" onclick="window.location.href='admin.html'" style="border-color:var(--secondary-color); color:var(--secondary-color); background-color:#eff6ff;"><i class="fa-solid fa-gauge-high"></i> Quản trị</button>` 
-            : '';
-        
-        headerActions.innerHTML = `
-            <button class="btn-cart" id="btn-cart-trigger" title="Giỏ hàng sách mua" style="margin-right: 8px;">
-                <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
-                <span class="cart-badge" id="cart-badge-count">0</span>
-            </button>
-            <button class="btn-ai-suggest" id="btn-ai-suggest" onclick="window.location.href='ai-suggest.html'">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý AI
-            </button>
-            ${adminButton}
-            <div class="user-greeting-badge" style="display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:600; color:var(--primary-color); cursor:pointer;">
-                <i class="fa-solid fa-user-circle" style="font-size:1.15rem; color:var(--secondary-color);"></i> Hi, ${loggedUser.fullname}
-            </div>
-            <button class="btn-login" id="btn-logout" style="border-color:#fca5a5; color:#e11d48; background-color:#fff1f2;" title="Đăng xuất tài khoản">
-                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-            </button>
-        `;
 
-        // Đồng bộ số lượng giỏ hàng ở header trang cá nhân
-        const cart = JSON.parse(sessionStorage.getItem('tvdn_shopping_cart')) || [];
-        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const cartBadge = document.getElementById('cart-badge-count');
-        if (cartBadge) {
-            cartBadge.textContent = count;
-            cartBadge.style.display = count > 0 ? 'flex' : 'none';
-        }
-
-        document.getElementById('btn-cart-trigger').addEventListener('click', () => {
-            window.location.href = 'index.html?openCart=true';
-        });
-
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            showConfirm('Xác nhận đăng xuất', 'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?', () => {
-                sessionStorage.removeItem('tvdn_logged_in_user');
-                window.location.href = 'index.html';
-            });
-        });
-    }
 
     // === 2. Điền thông tin hồ sơ ===
     document.getElementById('profile-fullname').textContent = loggedUser.fullname;

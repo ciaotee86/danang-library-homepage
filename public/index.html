@@ -137,13 +137,6 @@
                 <i class="fa-solid fa-bars"></i>
             </button>
 
-            <!-- Search -->
-            <div class="topbar-search">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-input" placeholder="Tìm sách, tác giả, chủ đề..." autocomplete="off">
-                <button class="topbar-search-btn" id="btn-search">Tìm</button>
-            </div>
-
             <!-- Actions -->
             <div class="topbar-actions">
                 <button class="topbar-icon-btn" title="Thông báo" id="btn-notify">
@@ -288,28 +281,128 @@
                     <div class="featured-row" id="featured-row">
                         <!-- Rendered by JS -->
                         <div class="featured-card">
-                            <div class="featured-cover"><div class="featured-cover-gradient cover-gradient-1" style="width:100%;height:100%;position:absolute;"></div><div class="featured-cover-text" style="position:relative;z-index:2;"><h4>Đắc Nhân Tâm</h4><p>Dale Carnegie</p></div><span class="featured-status badge-success">Còn sách</span></div>
-                            <div class="featured-card-body"><div class="featured-genre">Kỹ năng sống</div><div class="featured-title">Đắc Nhân Tâm</div><div class="featured-author">Dale Carnegie</div><div class="featured-stars">★★★★★ <span style="color:#94A3B8;">5.0</span></div></div>
+                            <div class="featured-cover">
+                                <div class="featured-cover-gradient cover-gradient-1" style="width:100%;height:100%;position:absolute;"></div>
+                                <div class="featured-cover-text" style="position:relative;z-index:2;">
+                                    <h4>Đắc Nhân Tâm</h4>
+                                    <p>Dale Carnegie</p>
+                                </div>
+                                <span class="featured-status badge-success">Còn sách</span>
+                                <div class="book-card-hover-overlay">
+                                    <button class="btn-action-view" onclick="openBookDetailModal('book-14')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                    <button class="btn-action-borrow" onclick="borrowBook('book-14', 'Đắc Nhân Tâm')"><i class="fa-solid fa-book-open"></i> Mượn sách</button>
+                                    <button class="btn-action-borrow" style="background:var(--gold);color:var(--navy-dark);" onclick="addToCart('book-14')"><i class="fa-solid fa-cart-plus"></i> Chọn mua</button>
+                                </div>
+                            </div>
+                            <div class="featured-card-body">
+                                <div class="featured-genre">Kỹ năng sống</div>
+                                <div class="featured-title">Đắc Nhân Tâm</div>
+                                <div class="featured-author">Dale Carnegie</div>
+                                <div class="featured-stars">★★★★★ <span style="color:#94A3B8;">5.0</span></div>
+                            </div>
                         </div>
                         <div class="featured-card">
-                            <div class="featured-cover"><div class="featured-cover-gradient cover-gradient-3" style="width:100%;height:100%;position:absolute;"></div><div class="featured-cover-text" style="position:relative;z-index:2;"><h4>Trí Tuệ Nhân Tạo Cho Người Không Chuyên</h4><p>John McCarthy</p></div><span class="featured-status" style="background:#F59E0B;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Đang mượn</span></div>
-                            <div class="featured-card-body"><div class="featured-genre">Công nghệ</div><div class="featured-title">Trí Tuệ Nhân Tạo Cho Người Không Chuyên</div><div class="featured-author">John McCarthy</div><div class="featured-stars">★★★★☆ <span style="color:#94A3B8;">4.7</span></div></div>
+                            <div class="featured-cover">
+                                <div class="featured-cover-gradient cover-gradient-3" style="width:100%;height:100%;position:absolute;"></div>
+                                <div class="featured-cover-text" style="position:relative;z-index:2;">
+                                    <h4>Trí Tuệ Nhân Tạo Cho Người Không Chuyên</h4>
+                                    <p>John McCarthy</p>
+                                </div>
+                                <span class="featured-status" style="background:#F59E0B;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Đang mượn</span>
+                                <div class="book-card-hover-overlay">
+                                    <button class="btn-action-view" onclick="openBookDetailModal('book-21')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                    <button class="btn-action-borrow disabled" disabled><i class="fa-solid fa-clock"></i> Hết sách giấy</button>
+                                </div>
+                            </div>
+                            <div class="featured-card-body">
+                                <div class="featured-genre">Công nghệ</div>
+                                <div class="featured-title">Trí Tuệ Nhân Tạo Cho Người Không Chuyên</div>
+                                <div class="featured-author">John McCarthy</div>
+                                <div class="featured-stars">★★★★☆ <span style="color:#94A3B8;">4.7</span></div>
+                            </div>
                         </div>
                         <div class="featured-card">
-                            <div class="featured-cover"><div class="featured-cover-gradient cover-gradient-4" style="width:100%;height:100%;position:absolute;"></div><div class="featured-cover-text" style="position:relative;z-index:2;"><h4>Nhà Giả Kim</h4><p>Paulo Coelho</p></div><span class="featured-status badge-success" style="background:#10B981;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Còn sách</span></div>
-                            <div class="featured-card-body"><div class="featured-genre">Tiểu thuyết</div><div class="featured-title">Nhà Giả Kim</div><div class="featured-author">Paulo Coelho</div><div class="featured-stars">★★★★★ <span style="color:#94A3B8;">4.9</span></div></div>
+                            <div class="featured-cover">
+                                <div class="featured-cover-gradient cover-gradient-4" style="width:100%;height:100%;position:absolute;"></div>
+                                <div class="featured-cover-text" style="position:relative;z-index:2;">
+                                    <h4>Nhà Giả Kim</h4>
+                                    <p>Paulo Coelho</p>
+                                </div>
+                                <span class="featured-status badge-success" style="background:#10B981;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Còn sách</span>
+                                <div class="book-card-hover-overlay">
+                                    <button class="btn-action-view" onclick="openBookDetailModal('book-13')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                    <button class="btn-action-borrow" onclick="borrowBook('book-13', 'Nhà Giả Kim')"><i class="fa-solid fa-book-open"></i> Mượn sách</button>
+                                    <button class="btn-action-borrow" style="background:var(--gold);color:var(--navy-dark);" onclick="addToCart('book-13')"><i class="fa-solid fa-cart-plus"></i> Chọn mua</button>
+                                </div>
+                            </div>
+                            <div class="featured-card-body">
+                                <div class="featured-genre">Tiểu thuyết</div>
+                                <div class="featured-title">Nhà Giả Kim</div>
+                                <div class="featured-author">Paulo Coelho</div>
+                                <div class="featured-stars">★★★★★ <span style="color:#94A3B8;">4.9</span></div>
+                            </div>
                         </div>
                         <div class="featured-card">
-                            <div class="featured-cover"><div class="featured-cover-gradient cover-gradient-2" style="width:100%;height:100%;position:absolute;"></div><div class="featured-cover-text" style="position:relative;z-index:2;"><h4>Tư Duy Nhanh Và Chậm</h4><p>Daniel Kahneman</p></div><span class="featured-status badge-success" style="background:#10B981;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Còn sách</span></div>
-                            <div class="featured-card-body"><div class="featured-genre">Tâm lý học</div><div class="featured-title">Tư Duy Nhanh Và Chậm</div><div class="featured-author">Daniel Kahneman</div><div class="featured-stars">★★★★★ <span style="color:#94A3B8;">4.8</span></div></div>
+                            <div class="featured-cover">
+                                <div class="featured-cover-gradient cover-gradient-2" style="width:100%;height:100%;position:absolute;"></div>
+                                <div class="featured-cover-text" style="position:relative;z-index:2;">
+                                    <h4>Tư Duy Nhanh Và Chậm</h4>
+                                    <p>Daniel Kahneman</p>
+                                </div>
+                                <span class="featured-status badge-success" style="background:#10B981;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Còn sách</span>
+                                <div class="book-card-hover-overlay">
+                                    <button class="btn-action-view" onclick="openBookDetailModal('book-22')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                    <button class="btn-action-borrow" onclick="borrowBook('book-22', 'Tư Duy Nhanh Và Chậm')"><i class="fa-solid fa-book-open"></i> Mượn sách</button>
+                                    <button class="btn-action-borrow" style="background:var(--gold);color:var(--navy-dark);" onclick="addToCart('book-22')"><i class="fa-solid fa-cart-plus"></i> Chọn mua</button>
+                                </div>
+                            </div>
+                            <div class="featured-card-body">
+                                <div class="featured-genre">Tâm lý học</div>
+                                <div class="featured-title">Tư Duy Nhanh Và Chậm</div>
+                                <div class="featured-author">Daniel Kahneman</div>
+                                <div class="featured-stars">★★★★★ <span style="color:#94A3B8;">4.8</span></div>
+                            </div>
                         </div>
                         <div class="featured-card">
-                            <div class="featured-cover"><div class="featured-cover-gradient cover-gradient-5" style="width:100%;height:100%;position:absolute;"></div><div class="featured-cover-text" style="position:relative;z-index:2;"><h4>Lịch Sử Đà Nẵng</h4><p>Nhiều tác giả</p></div><span class="featured-status badge-success" style="background:#10B981;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Còn sách</span></div>
-                            <div class="featured-card-body"><div class="featured-genre">Lịch sử</div><div class="featured-title">Lịch Sử Đà Nẵng</div><div class="featured-author">Nhiều tác giả</div><div class="featured-stars">★★★★☆ <span style="color:#94A3B8;">4.5</span></div></div>
+                            <div class="featured-cover">
+                                <div class="featured-cover-gradient cover-gradient-5" style="width:100%;height:100%;position:absolute;"></div>
+                                <div class="featured-cover-text" style="position:relative;z-index:2;">
+                                    <h4>Lịch Sử Đà Nẵng</h4>
+                                    <p>Nhiều tác giả</p>
+                                </div>
+                                <span class="featured-status badge-success" style="background:#10B981;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">Còn sách</span>
+                                <div class="book-card-hover-overlay">
+                                    <button class="btn-action-view" onclick="openBookDetailModal('book-2')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                    <button class="btn-action-borrow" onclick="borrowBook('book-2', 'Lịch Sử Đà Nẵng')"><i class="fa-solid fa-book-open"></i> Mượn sách</button>
+                                    <button class="btn-action-borrow" style="background:var(--gold);color:var(--navy-dark);" onclick="addToCart('book-2')"><i class="fa-solid fa-cart-plus"></i> Chọn mua</button>
+                                </div>
+                            </div>
+                            <div class="featured-card-body">
+                                <div class="featured-genre">Lịch sử</div>
+                                <div class="featured-title">Lịch Sử Đà Nẵng</div>
+                                <div class="featured-author">Nhiều tác giả</div>
+                                <div class="featured-stars">★★★★☆ <span style="color:#94A3B8;">4.5</span></div>
+                            </div>
                         </div>
                         <div class="featured-card">
-                            <div class="featured-cover"><div class="featured-cover-gradient cover-gradient-6" style="width:100%;height:100%;position:absolute;"></div><div class="featured-cover-text" style="position:relative;z-index:2;"><h4>Clean Code</h4><p>Robert C. Martin</p></div><span class="featured-status" style="background:#06B6D4;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">E-Book</span></div>
-                            <div class="featured-card-body"><div class="featured-genre">Lập trình</div><div class="featured-title">Clean Code</div><div class="featured-author">Robert C. Martin</div><div class="featured-stars">★★★★★ <span style="color:#94A3B8;">5.0</span></div></div>
+                            <div class="featured-cover">
+                                <div class="featured-cover-gradient cover-gradient-6" style="width:100%;height:100%;position:absolute;"></div>
+                                <div class="featured-cover-text" style="position:relative;z-index:2;">
+                                    <h4>Clean Code</h4>
+                                    <p>Robert C. Martin</p>
+                                </div>
+                                <span class="featured-status" style="background:#06B6D4;color:#fff;font-size:0.67rem;font-weight:700;padding:3px 8px;border-radius:999px;position:absolute;top:8px;right:8px;z-index:3;">E-Book</span>
+                                <div class="book-card-hover-overlay">
+                                    <button class="btn-action-view" onclick="openBookDetailModal('book-23')"><i class="fa-solid fa-eye"></i> Xem nhanh</button>
+                                    <button class="btn-action-borrow" onclick="showToast('Đang tải tệp Ebook PDF!', 'info')"><i class="fa-solid fa-download"></i> Tải PDF</button>
+                                </div>
+                            </div>
+                            <div class="featured-card-body">
+                                <div class="featured-genre">Lập trình</div>
+                                <div class="featured-title">Clean Code</div>
+                                <div class="featured-author">Robert C. Martin</div>
+                                <div class="featured-stars">★★★★★ <span style="color:#94A3B8;">5.0</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>

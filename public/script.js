@@ -6,6 +6,20 @@
 
 // ========================= HELPERS (GLOBAL) =========================
 
+// ========================= GLOBAL STATE =========================
+let cart = JSON.parse(sessionStorage.getItem('tvdn_shopping_cart')) || [];
+window.cart = cart;
+
+window.updateCartBadgeCount = function() {
+    const count = window.cart.reduce((sum, item) => sum + item.quantity, 0);
+    // Support cả id mới (topbar badge) lẫn id cũ
+    const badge = document.getElementById('cart-count-badge') || document.getElementById('cart-badge-count');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+};
+
 // ========================= LOGIN MODAL =========================
 
 window.openLoginModal = function() {
@@ -35,18 +49,102 @@ document.addEventListener('click', function(e) {
 window.updateUIForLoggedUser = function() {
     const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
 
-    // --- Topbar login button ---
-    const loginBtn = document.getElementById('btn-login-topbar');
-    const loginText = document.getElementById('btn-login-text');
-
-    if (loginBtn) {
+    // --- Topbar Actions Unified ---
+    const topbarActions = document.querySelector('.topbar-actions');
+    if (topbarActions) {
         if (loggedUser) {
-            if (loginText) loginText.textContent = `Hi, ${loggedUser.fullname.split(' ').pop()}`;
-            loginBtn.onclick = () => window.location.href = 'profile.html';
-            loginBtn.title = 'Trang cá nhân của bạn';
+            const adminBtn = loggedUser.role === 'admin' ? `<button class="topbar-login-btn" onclick="window.location.href='admin.html'" style="margin-right:8px; border:1px solid var(--teal); color:var(--teal); background:rgba(30,107,123,0.1);"><i class="fa-solid fa-gauge-high"></i> Quản trị</button>` : '';
+            topbarActions.innerHTML = `
+                <div style="position:relative; display:inline-block;">
+                    <button class="topbar-icon-btn" title="Thông báo" id="btn-notify">
+                        <i class="fa-regular fa-bell"></i><span class="topbar-badge" id="notify-badge" style="display:flex;">3</span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div class="notify-dropdown" id="notify-dropdown">
+                        <div class="notify-header">
+                            <span>Thông báo mới</span>
+                            <span style="font-size:0.75rem;color:var(--teal);cursor:pointer;" onclick="markAllNotificationsRead(event)">Đánh dấu đã đọc</span>
+                        </div>
+                        <div class="notify-list" id="notify-list">
+                            <div class="notify-item unread" onclick="handleNotificationClick('notify-1')">
+                                <div class="notify-item-icon ni-info"><i class="fa-solid fa-circle-info"></i></div>
+                                <div class="notify-item-content">
+                                    <span class="notify-item-title">Nhắc nhở trả sách</span>
+                                    <span class="notify-item-desc">Cuốn sách "Lịch Sử Đà Nẵng" của bạn đã quá hạn 14 ngày.</span>
+                                    <span class="notify-item-time">10 phút trước</span>
+                                </div>
+                            </div>
+                            <div class="notify-item unread" onclick="handleNotificationClick('notify-2')">
+                                <div class="notify-item-icon ni-success"><i class="fa-solid fa-circle-check"></i></div>
+                                <div class="notify-item-content">
+                                    <span class="notify-item-title">Mượn sách thành công</span>
+                                    <span class="notify-item-desc">Phiếu mượn slip-1003 cho cuốn "Mắt Biếc" đã được phê duyệt.</span>
+                                    <span class="notify-item-time">2 giờ trước</span>
+                                </div>
+                            </div>
+                            <div class="notify-item" onclick="handleNotificationClick('notify-3')">
+                                <div class="notify-item-icon ni-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <div class="notify-item-content">
+                                    <span class="notify-item-title">Cảnh báo hệ thống</span>
+                                    <span class="notify-item-desc">Cổng thanh toán MoMo đang bảo trì từ 2:00 - 4:00.</span>
+                                    <span class="notify-item-time">1 ngày trước</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notify-footer">
+                            <a href="profile.html">Xem tất cả thông báo</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="topbar-icon-btn" id="btn-cart-trigger" title="Giỏ hàng" onclick="typeof openCartModal === 'function' ? openCartModal() : window.location.href='index.html?openCart=true'">
+                    <i class="fa-solid fa-cart-shopping"></i><span class="topbar-badge" id="cart-count-badge" style="display:none;">0</span>
+                </button>
+                ${adminBtn}
+                <button class="topbar-login-btn" onclick="window.location.href='profile.html'" style="margin-right:8px;">
+                    <i class="fa-regular fa-circle-user"></i> ${loggedUser.fullname.split(' ').pop()}
+                </button>
+                <button class="topbar-login-btn" id="btn-logout" style="border:1px solid #fca5a5; color:#e11d48; background-color:#fff1f2;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Thoát
+                </button>
+            `;
+            const logoutBtn = document.getElementById('btn-logout');
+            if(logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    sessionStorage.removeItem('tvdn_logged_in_user');
+                    sessionStorage.removeItem('tvdn_auth_token');
+                    window.location.href = 'index.html';
+                });
+            }
         } else {
-            if (loginText) loginText.textContent = 'Đăng nhập';
-            loginBtn.onclick = openLoginModal;
+            topbarActions.innerHTML = `
+                <div style="position:relative; display:inline-block;">
+                    <button class="topbar-icon-btn" title="Thông báo" id="btn-notify">
+                        <i class="fa-regular fa-bell"></i><span class="topbar-badge" id="notify-badge" style="display:flex;">1</span>
+                    </button>
+                    <!-- Notification Dropdown for Guest -->
+                    <div class="notify-dropdown" id="notify-dropdown">
+                        <div class="notify-header">
+                            <span>Thông báo</span>
+                        </div>
+                        <div class="notify-list">
+                            <div class="notify-item unread" onclick="openLoginModal()">
+                                <div class="notify-item-icon ni-info"><i class="fa-solid fa-circle-info"></i></div>
+                                <div class="notify-item-content">
+                                    <span class="notify-item-title">Chào mừng bạn đọc mới!</span>
+                                    <span class="notify-item-desc">Đăng nhập tài khoản để mượn sách miễn phí và đọc E-book trực tuyến.</span>
+                                    <span class="notify-item-time">Vừa xong</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notify-footer">
+                            <a href="#" onclick="openLoginModal(); return false;">Đăng nhập ngay</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="topbar-login-btn" id="btn-login-topbar" onclick="typeof openLoginModal === 'function' ? openLoginModal() : window.location.href='login.html'">
+                    <i class="fa-regular fa-circle-user"></i> Đăng nhập
+                </button>
+            `;
         }
     }
 
@@ -60,11 +158,23 @@ window.updateUIForLoggedUser = function() {
         if (sidebarName) sidebarName.textContent = loggedUser.fullname;
         if (sidebarRole) sidebarRole.textContent = loggedUser.role === 'admin' ? '⚙️ Quản trị viên' : '📚 Bạn đọc';
         if (sidebarAvatar) sidebarAvatar.innerHTML = `<span style="font-size:0.75rem;font-weight:800;">${loggedUser.fullname.charAt(loggedUser.fullname.lastIndexOf(' ')+1)}</span>`;
-        if (sidebarBtn) sidebarBtn.onclick = () => window.location.href = 'profile.html';
+        if (sidebarBtn) {
+            sidebarBtn.removeAttribute('onclick');
+            sidebarBtn.onclick = (e) => {
+                e.preventDefault();
+                window.location.href = 'profile.html';
+            };
+        }
     } else {
         if (sidebarName) sidebarName.textContent = 'Đăng nhập';
         if (sidebarRole) sidebarRole.textContent = 'Bạn chưa đăng nhập';
-        if (sidebarBtn) sidebarBtn.onclick = openLoginModal;
+        if (sidebarBtn) {
+            sidebarBtn.removeAttribute('onclick');
+            sidebarBtn.onclick = (e) => {
+                e.preventDefault();
+                openLoginModal();
+            };
+        }
     }
 
     // --- Cart badge ---
@@ -77,15 +187,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cập nhật UI auth
     updateUIForLoggedUser();
 
-    // Nút notify (demo)
-    const notifyBtn = document.getElementById('btn-notify');
-    if (notifyBtn) {
+    // Toggle notification dropdown (event delegation)
+    document.addEventListener('click', (e) => {
+        const notifyBtn = document.getElementById('btn-notify');
+        const notifyDropdown = document.getElementById('notify-dropdown');
+        if (!notifyBtn || !notifyDropdown) return;
+
+        // If clicked the bell button or a child of the bell button
+        if (notifyBtn.contains(e.target)) {
+            e.stopPropagation();
+            notifyDropdown.classList.toggle('active');
+        } else if (!notifyDropdown.contains(e.target)) {
+            notifyDropdown.classList.remove('active');
+        }
+    });
+
+    window.markAllNotificationsRead = function(e) {
+        if (e) e.stopPropagation();
         const badge = document.getElementById('notify-badge');
-        if (badge) badge.style.display = 'flex';
-        notifyBtn.addEventListener('click', () => {
-            showToast('Bạn có 3 thông báo mới từ thư viện!', 'info');
+        if (badge) badge.style.display = 'none';
+        document.querySelectorAll('.notify-item.unread').forEach(item => {
+            item.classList.remove('unread');
         });
-    }
+        showToast('Đã đánh dấu đọc tất cả thông báo.', 'success');
+    };
+
+    window.handleNotificationClick = function(id) {
+        showToast('Đang mở chi tiết thông báo...', 'info');
+    };
 
     // === BOOK GRID RENDERING ===
     const bookGrid = document.getElementById('book-grid');
@@ -117,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.renderBooks = function() {
-        if (!bookGrid || !allBooks.length) return;
+        if (!bookGrid) return;
 
         // Lọc theo genre
         let filtered = allBooks;
@@ -317,20 +446,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loadBooks();
 
     // === SHOPPING CART ===
-    let cart = JSON.parse(sessionStorage.getItem('tvdn_shopping_cart')) || [];
-
-    window.updateCartBadgeCount = function() {
-        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-        // Support cả id mới (topbar badge) lẫn id cũ
-        const badge = document.getElementById('cart-count-badge') || document.getElementById('cart-badge-count');
-        if (badge) {
-            badge.textContent = count;
-            badge.style.display = count > 0 ? 'flex' : 'none';
-        }
-    };
     updateCartBadgeCount();
 
     window.addToCart = async function(bookId) {
+        const loggedUser = JSON.parse(sessionStorage.getItem('tvdn_logged_in_user'));
+        if (!loggedUser) {
+            showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng!', 'warning');
+            if (typeof openLoginModal === 'function') openLoginModal();
+            return;
+        }
         try {
             const res = await fetch('/api/books');
             const books = await res.json();
