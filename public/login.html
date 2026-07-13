@@ -28,6 +28,16 @@
             padding: 24px;
         }
 
+        .content-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
         .login-page-container {
             background: var(--bg-card);
             width: 100%;
@@ -39,11 +49,12 @@
             grid-template-columns: 1fr 1fr;
             border: 1px solid var(--border);
             animation: scaleIn 0.45s var(--ease-spring) both;
+            margin: 0 auto;
         }
 
         /* Left Panel — Form */
         .login-panel-left {
-            padding: 52px 48px;
+            padding: 64px 48px 52px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -124,11 +135,63 @@
         .login-page-form {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            margin-top: 4px;
+        }
+
+        .btn-page-submit {
+            background: linear-gradient(135deg, var(--teal) 0%, #165b69 100%);
+            color: #fff;
+            border: none;
+            padding: 13px 20px;
+            border-radius: var(--r-md);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all var(--t-base) var(--ease);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(30, 107, 123, 0.2);
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .btn-page-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 107, 123, 0.35);
+            background: linear-gradient(135deg, #228496 0%, var(--teal) 100%);
+        }
+
+        .btn-page-submit:active {
+            transform: translateY(0);
         }
 
         .form-tab-toggle {
-            margin-top: 14px;
+            margin-top: 18px;
             font-size: 0.83rem;
             color: var(--text-muted);
             text-align: center;
@@ -394,19 +457,6 @@
 
   <!-- MAIN CONTENT AREA -->
   <div class="main-content-area">
-    <header class="topbar" id="topbar">
-      <button class="topbar-menu-btn" onclick="document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');" aria-label="Menu">
-        <i class="fa-solid fa-bars"></i>
-      </button>
-      <div class="topbar-search">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="topbar-search-input" placeholder="Tìm sách, tác giả, chủ đề...">
-        <button class="topbar-search-btn" onclick="const q=document.getElementById('topbar-search-input').value.trim();if(q)window.location.href='search.html?q='+encodeURIComponent(q);">Tìm</button>
-      </div>
-      <div class="topbar-actions">
-        <a href="login.html" class="topbar-login-btn"><i class="fa-regular fa-circle-user"></i> Đăng nhập</a>
-      </div>
-    </header>
     <div class="content-inner">
 
     <!-- Main Container -->
@@ -449,7 +499,7 @@
                         </label>
                         <a href="#" class="forgot-pass-link" onclick="alert('Vui lòng mang CCCD liên hệ quầy Thủ thư để cấp lại mật khẩu thẻ.')">Quên mật khẩu?</a>
                     </div>
-                    <button type="submit" class="btn-page-submit">Đăng nhập hệ thống</button>
+                    <button type="submit" class="btn-page-submit">Đăng nhập</button>
                 </form>
 
                 <div class="form-tab-toggle">

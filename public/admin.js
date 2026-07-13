@@ -519,12 +519,12 @@ window.selectSlipRow = async function(slipId) {
 
         if (slip.status === 'borrowing' || slip.status === 'overdue') {
             // Nút Trả sách
-            actionsRow.innerHTML += `<button class="btn-search-submit" style="background-color:#10b981;" onclick="returnBookAction('${slip.id}')"><i class="fa-solid fa-circle-check"></i> Xác nhận trả sách</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:#10b981; color:#fff; font-weight:700; border:none; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:0 2px 5px rgba(16,185,129,0.2);" onclick="returnBookAction('${slip.id}')"><i class="fa-solid fa-circle-check"></i> Xác nhận trả sách</button>`;
             // Nút Gia hạn
-            actionsRow.innerHTML += `<button class="btn-login" style="border-color:var(--accent-color); color:var(--accent-dark);" onclick="renewBookAction('${slip.id}')"><i class="fa-solid fa-calendar-plus"></i> Gia hạn 14 ngày</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:#fef3c7; color:#b45309; border:1px solid #fde68a; font-weight:700; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; margin-left:8px;" onclick="renewBookAction('${slip.id}')"><i class="fa-solid fa-calendar-plus"></i> Gia hạn 14 ngày</button>`;
         } else if (slip.status === 'returned' && slip.fineAmount > 0 && slip.paymentStatus === 'unpaid') {
             // Nếu đã trả nhưng còn nợ tiền phạt
-            actionsRow.innerHTML += `<button class="btn-search-submit" style="background-color:var(--accent-dark);" onclick="openPaymentModal('${slip.id}', ${slip.fineAmount})"><i class="fa-solid fa-credit-card"></i> Thu tiền phạt quá hạn</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:var(--teal); color:#fff; font-weight:700; border:none; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:0 2px 5px rgba(30,107,123,0.2);" onclick="openPaymentModal('${slip.id}', ${slip.fineAmount})"><i class="fa-solid fa-credit-card"></i> Thu tiền phạt quá hạn</button>`;
         }
     } catch (err) {
         console.error(err);
@@ -577,11 +577,24 @@ async function loadStats() {
         const resReaders = await fetch('/api/readers');
         const readers = await resReaders.json();
 
+        const resOrders = await fetch('/api/orders');
+        const orders = await resOrders.json();
+
         // 1. Load Metric Widgets
         document.getElementById('metric-s-books').textContent = books.length;
         document.getElementById('metric-s-borrows').textContent = slips.length;
         document.getElementById('metric-s-readers').textContent = readers.length;
         document.getElementById('metric-s-overdue').textContent = slips.filter(s => s.status === 'overdue').length;
+
+        // Calculate Revenue (Book sales + Paid overdue fines)
+        const orderRev = orders.filter(o => o.paymentStatus === 'paid').reduce((sum, o) => sum + o.totalAmount, 0);
+        const fineRev = slips.filter(s => s.paymentStatus === 'paid').reduce((sum, s) => sum + s.fineAmount, 0);
+        const totalRev = orderRev + fineRev;
+
+        const revWidget = document.getElementById('metric-s-revenue');
+        if (revWidget) {
+            revWidget.textContent = totalRev.toLocaleString() + 'đ';
+        }
 
         // 2. Load Top tables
         // Top sách
@@ -988,12 +1001,12 @@ window.selectOrderRow = async function(orderId) {
         actionsRow.innerHTML = '';
 
         if (order.status === 'pending') {
-            actionsRow.innerHTML += `<button class="btn-search-submit" style="background-color:#10b981;" onclick="updateOrderStatus('${order.id}', 'paid')"><i class="fa-solid fa-credit-card"></i> Duyệt Đã Thanh Toán</button>`;
-            actionsRow.innerHTML += `<button class="btn-login" style="border-color:#fca5a5; color:#e11d48; background-color:#fff1f2;" onclick="updateOrderStatus('${order.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Hủy đơn hàng</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:#10b981; color:#fff; font-weight:700; border:none; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:0 2px 5px rgba(16,185,129,0.2);" onclick="updateOrderStatus('${order.id}', 'paid')"><i class="fa-solid fa-credit-card"></i> Duyệt Đã Thanh Toán</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:#fff1f2; color:#e11d48; border:1px solid #fca5a5; font-weight:700; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; margin-left:8px;" onclick="updateOrderStatus('${order.id}', 'cancelled')"><i class="fa-solid fa-xmark"></i> Hủy đơn hàng</button>`;
         } else if (order.status === 'paid') {
-            actionsRow.innerHTML += `<button class="btn-search-submit" style="background-color:#2563eb;" onclick="updateOrderStatus('${order.id}', 'shipping')"><i class="fa-solid fa-truck-fast"></i> Bắt đầu giao hàng</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:#2563eb; color:#fff; font-weight:700; border:none; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:0 2px 5px rgba(37,99,235,0.2);" onclick="updateOrderStatus('${order.id}', 'shipping')"><i class="fa-solid fa-truck-fast"></i> Bắt đầu giao hàng</button>`;
         } else if (order.status === 'shipping') {
-            actionsRow.innerHTML += `<button class="btn-search-submit" style="background-color:#16a34a;" onclick="updateOrderStatus('${order.id}', 'completed')"><i class="fa-solid fa-circle-check"></i> Xác nhận hoàn thành giao</button>`;
+            actionsRow.innerHTML += `<button class="btn-admin-action" style="background-color:#16a34a; color:#fff; font-weight:700; border:none; padding:10px 18px; border-radius:var(--r-sm); font-size:0.85rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:0 2px 5px rgba(22,163,74,0.2);" onclick="updateOrderStatus('${order.id}', 'completed')"><i class="fa-solid fa-circle-check"></i> Xác nhận hoàn thành giao</button>`;
         } else {
             actionsRow.innerHTML = `<span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;"><i class="fa-solid fa-circle-info"></i> Đơn hàng đã kết thúc ở trạng thái: ${order.status.toUpperCase()}</span>`;
         }

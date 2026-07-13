@@ -1702,6 +1702,7 @@ img { display: block; max-width: 100%; }
 .icon-amber   { background: #FFFBEB; color: #D97706; }
 .icon-emerald { background: #ECFDF5; color: #059669; }
 .icon-rose    { background: #FFF1F2; color: #E11D48; }
+.icon-teal    { background: #E6F4F1; color: #1E6B7B; }
 
 .metric-widget-info { display: flex; flex-direction: column; }
 .metric-widget-val { font-size: 1.5rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
@@ -1928,4 +1929,16 @@ img { display: block; max-width: 100%; }
 
 .notify-footer a:hover {
     text-decoration: underline;
+}
+
+/* ========================= ADMIN ACTIONS BUTTONS ========================= */
+.btn-admin-action {
+    transition: all var(--t-fast) var(--ease);
+}
+.btn-admin-action:hover {
+    transform: translateY(-1.5px);
+    filter: brightness(1.05);
+}
+.btn-admin-action:active {
+    transform: translateY(0);
 }
