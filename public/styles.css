@@ -225,7 +225,6 @@ img { display: block; max-width: 100%; }
     height: 40px;
     width: auto;
     object-fit: contain;
-    filter: brightness(0) invert(1);
     flex-shrink: 0;
 }
 
